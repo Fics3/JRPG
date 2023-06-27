@@ -1,30 +1,39 @@
 package org.example;
 
+import org.example.Entity.Player;
+
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
 public class GamePanel extends JPanel implements Runnable {
 
-    final int originalTileSize = 16;
-    final int scale = 3;
+    private final int originalTileSize = 16;
+    private final int scale = 3;
+    private int tileSize= originalTileSize*scale;
+    private final int maxScreenCol=16;
+    private final int maxScreenRow=12;
+    private final int screenWight=tileSize*maxScreenCol;//768
+    private final int screenHeight=tileSize*maxScreenRow;//576
 
-    final int tileSize= originalTileSize*scale;
-    final int maxScreenCol=16;
-    final int maxScreenRow=12;
-    final int screenWight=tileSize*maxScreenCol;//768
-    final int screenHeight=tileSize*maxScreenRow;//576
+    private int playerX=100;
 
-    int playerX=100;
+    private int playerY=100;
+    private int playerSpeed=3;
 
-
-    int playerY=100;
-    int playerSpeed=4;
-
-    double maxFPS = 60;
-
+    private double maxFPS = 60;
     KeyboardController keyboardController = new KeyboardController();
 
    Thread gameThread;
+   private Player player;
+    {
+        try {
+            player = new Player(this,keyboardController);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public GamePanel(){
         this.setPreferredSize(new Dimension(screenWight,screenHeight));
         this.setBackground(Color.black);
@@ -63,27 +72,19 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update(){
-
-
-        if(keyboardController.upPressed){
-            playerY-=playerSpeed;
-        }
-        else if(keyboardController.downPressed){
-            playerY+=playerSpeed;
-        }
-        else if(keyboardController.rightPressed){
-            playerX+=playerSpeed;
-        }
-        else if(keyboardController.leftPressed){
-            playerX-=playerSpeed;
-        }
+        player.update();
     }
     public void paintComponent(Graphics graphics){
 
         super.paintComponent(graphics);
         Graphics2D graphics2D = (Graphics2D) graphics;
-        graphics2D.setColor(Color.cyan);
-        graphics2D.fillRect(playerX,playerY,tileSize,tileSize);
+        player.draw(graphics2D);
         graphics2D.dispose();
+    }
+    public void setTileSize(int value){
+        tileSize=value;
+    }
+    public int getTileSize(){
+        return tileSize;
     }
 }
