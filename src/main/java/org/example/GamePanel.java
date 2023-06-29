@@ -1,6 +1,7 @@
 package org.example;
 
 import org.example.Entity.Player;
+import org.example.Tiles.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,10 +17,7 @@ public class GamePanel extends JPanel implements Runnable {
     private final int screenWight=tileSize*maxScreenCol;//768
     private final int screenHeight=tileSize*maxScreenRow;//576
 
-    private int playerX=100;
-
-    private int playerY=100;
-    private int playerSpeed=3;
+    TileManager tileManager=new TileManager(this);
 
     private double maxFPS = 60;
     KeyboardController keyboardController = new KeyboardController();
@@ -34,7 +32,7 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
-    public GamePanel(){
+    public GamePanel() throws IOException {
         this.setPreferredSize(new Dimension(screenWight,screenHeight));
         this.setBackground(Color.black);
         this.setDoubleBuffered(true);
@@ -78,6 +76,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         super.paintComponent(graphics);
         Graphics2D graphics2D = (Graphics2D) graphics;
+        tileManager.draw(graphics2D);
         player.draw(graphics2D);
         graphics2D.dispose();
     }
@@ -87,4 +86,22 @@ public class GamePanel extends JPanel implements Runnable {
     public int getTileSize(){
         return tileSize;
     }
+
+    public int getScreenWight() {
+        return screenWight;
+    }
+
+    public int getScreenHeight() {
+        return screenHeight;
+    }
+
+    public int getMaxScreenCol() {
+        return maxScreenCol;
+    }
+
+    public int getMaxScreenRow() {
+        return maxScreenRow;
+    }
+
+
 }
