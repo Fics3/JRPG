@@ -1,5 +1,4 @@
 package org.example;
-
 import javax.swing.*;
 import java.io.IOException;
 
@@ -17,7 +16,7 @@ public class Main {
 
          window.setLocationRelativeTo(null);
          window.setVisible(true);
-
+         gamePanel.setupGame();
          gamePanel.startGameThread();
     }
 

@@ -1,5 +1,6 @@
 package org.example.Entity;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Entity {
@@ -9,6 +10,9 @@ public class Entity {
 
     private BufferedImage upStay, up1, up2,downStay, down1,down2,leftStay,left1,left2,rightStay,right1,right2;
     private String direction;
+
+    public Rectangle solidArea;
+    public boolean collisionOn=false;
 
     public void setX(int x) {
         this.x = x;
