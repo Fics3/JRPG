@@ -12,61 +12,63 @@ import java.util.Objects;
 
 public class Player extends Entity{
 
-    private GamePanel gamePanel;
     private static KeyboardController keyboardController;
     private int spriteCycle=0;
-    private int spriteNum=1;
 
     private int screenX;
     private int screenY;
 
     public Player(GamePanel gamePanel, KeyboardController keyboardController) throws IOException {
-        this.gamePanel=gamePanel;
+        super(gamePanel);
+
         Player.keyboardController =keyboardController;
 
         screenX=gamePanel.getScreenWight()/2-(gamePanel.getTileSize()/2);
         screenY=gamePanel.getScreenHeight()/2-(gamePanel.getTileSize()/2);
 
-        solidArea = new Rectangle(8,16, (int) (gamePanel.getTileSize()/1.5), (int) (gamePanel.getTileSize()/1.5));
+        setSolidDefaultX(getSolidArea().x);
+        setSolidDefaultY(getSolidArea().y);
+
+        setSolidArea(new Rectangle(8,16, (int) (gamePanel.getTileSize()/1.5), (int) (gamePanel.getTileSize()/1.5)));
 
         setDafautl();
         getPlayerImage();
     }
 
     public void setDafautl(){
-        setX(gamePanel.getMaxWorldWight()/2);
-        setY(gamePanel.getMaxWorldHeight()/2);
+        setX(getGamePanel().getMaxWorldWight()/2);
+        setY(getGamePanel().getMaxWorldHeight()/2);
         setSpeed(4);
         setDirection("down");
     }
     public void getPlayerImage() throws IOException {
         try {
-            this.setDown1(setup("FWalk1"));
-            this.setDownStay(setup("FStay"));
-            this.setDown2(setup("FWalk2"));
-            this.setUp1(setup("BWalk1"));
-            this.setUpStay(setup("BStay"));
-            this.setUp2(setup("BWalk2"));
-            this.setLeft1(setup("LWalk1"));
-            this.setLeftStay(setup("LStay"));
-            this.setLeft2(setup("LWalk2"));
-            this.setRight1(setup("RWalk1"));
-            this.setRightStay(setup("RStay"));
-            this.setRight2(setup("RWalk2"));
+            this.setDown1(setupPlayer("FWalk1"));
+            this.setDownStay(setupPlayer("FStay"));
+            this.setDown2(setupPlayer("FWalk2"));
+            this.setUp1(setupPlayer("BWalk1"));
+            this.setUpStay(setupPlayer("BStay"));
+            this.setUp2(setupPlayer("BWalk2"));
+            this.setLeft1(setupPlayer("LWalk1"));
+            this.setLeftStay(setupPlayer("LStay"));
+            this.setLeft2(setupPlayer("LWalk2"));
+            this.setRight1(setupPlayer("RWalk1"));
+            this.setRightStay(setupPlayer("RStay"));
+            this.setRight2(setupPlayer("RWalk2"));
 
         }
         catch (IOException e){
             e.printStackTrace();
         }
     }
-    public BufferedImage setup(String imageName) throws IOException {
-        UtilityTools utilityTools = new UtilityTools();
-        BufferedImage image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Player/"+imageName+".png")));
-        BufferedImage scaledImage = null;
-
-        scaledImage = utilityTools.scaleImage(image,gamePanel.getTileSize(),gamePanel.getTileSize());
-        return scaledImage;
-    }
+//    public BufferedImage setup(String imageName) throws IOException {
+//        UtilityTools utilityTools = new UtilityTools();
+//        BufferedImage image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Player/"+imageName+".png")));
+//        BufferedImage scaledImage = null;
+//
+//        scaledImage = utilityTools.scaleImage(image,getGamePanel().getTileSize(),getGamePanel().getTileSize());
+//        return scaledImage;
+//    }
     public void update(){
         if(keyboardController.isDownPressed() || keyboardController.isLeftPressed() || keyboardController.isUpPressed() || keyboardController.isRightPressed()) {
 
@@ -83,10 +85,14 @@ public class Player extends Entity{
                 setDirection("left");
                 this.setX(this.getX() - this.getSpeed());
             }
-            collisionOn=false;
-            gamePanel.getCollisionChecker().checkTile(this);
+            setCollisionOn(false);
+            getGamePanel().getCollisionChecker().checkTile(this);
 
-            if(collisionOn){
+            getGamePanel().getCollisionChecker().checkObject(this,true);
+
+            getGamePanel().getCollisionChecker().checkEntity(this, getGamePanel().getNpcs());
+
+            if(isCollisionOn()){
                 switch (getDirection()){
                     case "up":setY(getY()+getSpeed()); break;
                     case "down":setY(getY()-getSpeed()); break;
@@ -97,39 +103,37 @@ public class Player extends Entity{
 
             spriteCycle++;
             if (spriteCycle > 20) {
-                if (spriteNum == 1) spriteNum = 2;
-                else if (spriteNum == 2) spriteNum = 3;
-                else if (spriteNum == 3) spriteNum = 1;
+                if (getSpriteNum() == 1) setSpriteNum(2);
+                else if (getSpriteNum() == 2) setSpriteNum(3);
+                else if (getSpriteNum() == 3) setSpriteNum(1);
                 spriteCycle = 0;
             }
         }
 
     }
     public void draw(Graphics2D graphics2D){
-//        graphics2D.setColor(Color.cyan);
-//        graphics2D.fillRect(getX(),getY(),gamePanel.getTileSize(),gamePanel.getTileSize());
 
         BufferedImage image = null;
         switch (getDirection()) {
             case "up":
-                if(spriteNum==1) image=getUp1();
-                else if(spriteNum==2)image=getUpStay();
-                else if(spriteNum==3)image=getUp2();
+                if(getSpriteNum()==1) image=getUp1();
+                else if(getSpriteNum()==2)image=getUpStay();
+                else if(getSpriteNum()==3)image=getUp2();
                 break;
             case "down":
-                if(spriteNum==1) image=getDown1();
-                else if(spriteNum==2)image=getDownStay();
-                else if(spriteNum==3)image=getDown2();
+                if(getSpriteNum()==1) image=getDown1();
+                else if(getSpriteNum()==2)image=getDownStay();
+                else if(getSpriteNum()==3)image=getDown2();
                 break;
             case "left":
-                if(spriteNum==1) image=getLeft1();
-                else if(spriteNum==2)image=getLeftStay();
-                else if(spriteNum==3)image=getLeft2();
+                if(getSpriteNum()==1) image=getLeft1();
+                else if(getSpriteNum()==2)image=getLeftStay();
+                else if(getSpriteNum()==3)image=getLeft2();
                 break;
             case "right" :
-                if(spriteNum==1) image=getRight1();
-                else if(spriteNum==2)image=getRightStay();
-                else if(spriteNum==3)image=getRight2();
+                if(getSpriteNum()==1) image=getRight1();
+                else if(getSpriteNum()==2)image=getRightStay();
+                else if(getSpriteNum()==3)image=getRight2();
                 break;
         };
 

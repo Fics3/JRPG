@@ -1,19 +1,98 @@
 package org.example.Entity;
 
+import org.example.GamePanel;
+import org.example.UtilityTools;
+
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.Objects;
 
 public class Entity {
     private int x;
     private int y;
     private int speed;
-
     private BufferedImage upStay, up1, up2,downStay, down1,down2,leftStay,left1,left2,rightStay,right1,right2;
     private String direction;
+    private int spriteNum=2;
+    private Rectangle solidArea= new Rectangle(0, 0 ,24,16);
+    private int solidDefaultX, solidDefaultY;
+    private boolean collisionOn=false;
+    private GamePanel gamePanel;
 
-    public Rectangle solidArea;
-    public boolean collisionOn=false;
 
+    public Entity(GamePanel gamePanel){
+        this.gamePanel = gamePanel;
+
+    }
+    public void setAction(){
+
+    }
+    public void update(){
+
+        setCollisionOn(false);
+        getGamePanel().getCollisionChecker().checkTile(this);
+        getGamePanel().getCollisionChecker().checkObject(this,false);
+        gamePanel.getCollisionChecker().checkPlayer(gamePanel.getPlayer());
+
+        if(isCollisionOn()){
+            switch (getDirection()){
+                case "up":setY(getY()+getSpeed()); break;
+                case "down":setY(getY()-getSpeed()); break;
+                case "right":setX(getX()-getSpeed()); break;
+                case "left":setX(getX()+getSpeed()); break;
+            }
+        }
+
+    }
+
+
+    public BufferedImage setup(String imageName) throws IOException {
+        UtilityTools utilityTools = new UtilityTools();
+        BufferedImage image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/NPC/"+imageName+".png")));
+        return utilityTools.scaleImage(image,getGamePanel().getTileSize(),getGamePanel().getTileSize());
+    }
+    public BufferedImage setupPlayer(String imageName) throws IOException {
+        UtilityTools utilityTools = new UtilityTools();
+        BufferedImage image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Player/"+imageName+".png")));
+        return utilityTools.scaleImage(image,getGamePanel().getTileSize(),getGamePanel().getTileSize());
+    }
+    public void draw(Graphics2D graphics2D)  {
+        BufferedImage image = null;
+        if (x + gamePanel.getTileSize() > gamePanel.getPlayer().getY() - gamePanel.getPlayer().getScreenY() &&
+                y - gamePanel.getTileSize() < gamePanel.getPlayer().getY() + gamePanel.getPlayer().getScreenY() &&
+                x + gamePanel.getTileSize() > gamePanel.getPlayer().getX() - gamePanel.getPlayer().getScreenX() &&
+                y - gamePanel.getTileSize() < gamePanel.getPlayer().getX() + gamePanel.getPlayer().getScreenX()) {
+
+            int screenX = x - gamePanel.getPlayer().getX() + gamePanel.getPlayer().getScreenX();
+            int screenY = y - gamePanel.getPlayer().getY() + gamePanel.getPlayer().getScreenY();
+            switch (getDirection()) {
+                case "up":
+                    if (spriteNum == 1) image = getUp1();
+                    else if (spriteNum == 2) image = getUpStay();
+                    else if (spriteNum == 3) image = getUp2();
+                    break;
+                case "down":
+                    if (spriteNum == 1) image = getDown1();
+                    else if (spriteNum == 2) image = getDownStay();
+                    else if (spriteNum == 3) image = getDown2();
+                    break;
+                case "left":
+                    if (spriteNum == 1) image = getLeft1();
+                    else if (spriteNum == 2) image = getLeftStay();
+                    else if (spriteNum == 3) image = getLeft2();
+                    break;
+                case "right":
+                    if (spriteNum == 1) image = getRight1();
+                    else if (spriteNum == 2) image = getRightStay();
+                    else if (spriteNum == 3) image = getRight2();
+                    break;
+            }
+            graphics2D.drawImage(image, screenX, screenY, null);
+  }
+
+    }
     public void setX(int x) {
         this.x = x;
     }
@@ -137,5 +216,68 @@ public class Entity {
 
     public void setDirection(String direction) {
         this.direction = direction;
+    }
+
+    public Rectangle getSolidArea() {
+        return solidArea;
+    }
+
+    public void setSolidArea(Rectangle solidArea) {
+        this.solidArea = solidArea;
+    }
+
+    public boolean isCollisionOn() {
+        return collisionOn;
+    }
+
+    public void setCollisionOn(boolean collisionOn) {
+        this.collisionOn = collisionOn;
+    }
+
+    public void setSpriteNum(int spriteNum) {
+        this.spriteNum = spriteNum;
+    }
+
+    public int getSpriteNum() {
+        return spriteNum;
+    }
+
+    public void setGamePanel(GamePanel gamePanel) {
+        this.gamePanel = gamePanel;
+    }
+
+    public GamePanel getGamePanel() {
+        return gamePanel;
+    }
+
+    public void setSolidArea(int i, int i1) {
+        solidArea.x=i;
+        solidArea.y=i1;
+    }
+    public void setSolidX(int i){
+        solidArea.x=i;
+    }
+    public void setSolidY(int i){
+        solidArea.y=i;
+    }
+
+    public int getSolidDefaultX() {
+        return solidDefaultX;
+    }
+
+    public void setSolidDefaultX(int solidDefaultX) {
+        this.solidDefaultX = solidDefaultX;
+    }
+
+    public int getSolidDefaultY() {
+        return solidDefaultY;
+    }
+
+    public void setSolidDefaultY(int solidDefaultY) {
+        this.solidDefaultY = solidDefaultY;
+    }
+
+    public boolean isCollision() {
+        return collisionOn;
     }
 }

@@ -5,9 +5,13 @@ import java.awt.event.KeyListener;
 
 public class KeyboardController implements KeyListener {
 
+    GamePanel gamePanel;
 
     private boolean upPressed,downPressed,leftPressed, rightPressed;
 
+    public KeyboardController(GamePanel gamePanel){
+        this.gamePanel=gamePanel;
+    }
     @Override
     public void keyTyped(KeyEvent e) {
 
@@ -27,6 +31,15 @@ public class KeyboardController implements KeyListener {
         }
         if(code == KeyEvent.VK_D){
             rightPressed=true;
+        }
+        if(code == KeyEvent.VK_ESCAPE){
+            if(gamePanel.getGameState() == gamePanel.getAdventureState()){
+                gamePanel.setGameState(gamePanel.getPauseState());
+            }
+            else if(gamePanel.getGameState()== gamePanel.getPauseState()){
+                gamePanel.setGameState(gamePanel.getAdventureState());
+                System.out.println(gamePanel.getGameState());
+            }
         }
     }
 

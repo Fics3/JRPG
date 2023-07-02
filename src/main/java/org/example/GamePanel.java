@@ -1,5 +1,6 @@
 package org.example;
 
+import org.example.Entity.Entity;
 import org.example.Entity.Player;
 import org.example.Objects.Object;
 import org.example.Tiles.TileManager;
@@ -24,13 +25,20 @@ public class GamePanel extends JPanel implements Runnable {
     private final int maxWorldWight=maxWorldCol*tileSize;
     private final int maxWorldHeight=maxWorldRow*tileSize;
 
+    private int gameState;
+    private final int adventureState = 1;
+    private final int pauseState = 2;
+    private final int fightState = 3;
+
     TileManager tileManager=new TileManager(this);
 
     private double maxFPS = 60;
-    private KeyboardController keyboardController = new KeyboardController();
+    private KeyboardController keyboardController = new KeyboardController(this);
     private CollisionChecker collisionChecker=new CollisionChecker(this);
     private AssetsSetter assetsSetter = new AssetsSetter(this);
+    private final UI ui = new UI(this);
     private LinkedList<Object> objects = new LinkedList<>();
+    private LinkedList<Entity> npcs = new LinkedList<>();
    Thread gameThread;
    private Player player;
     {
@@ -51,6 +59,8 @@ public class GamePanel extends JPanel implements Runnable {
     }
     public void setupGame() throws IOException {
         assetsSetter.setObject();
+        assetsSetter.setNpc();
+        gameState = adventureState;
     }
 
     public void startGameThread(){
@@ -81,19 +91,31 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update(){
-        player.update();
+        if(gameState == adventureState) {
+            player.update();
+            for (Entity npc : npcs) {
+                npc.update();
+            }
+
+        }
+        if (gameState == pauseState){
+
+        }
+
     }
     public void paintComponent(Graphics graphics){
 
         super.paintComponent(graphics);
         Graphics2D graphics2D = (Graphics2D) graphics;
         tileManager.draw(graphics2D);
-
         for (Object tmp : objects) {
                 tmp.draw(graphics2D,this);
         }
-
+        for (Entity npc : npcs) {
+            npc.draw(graphics2D);
+        }
         player.draw(graphics2D);
+        ui.draw(graphics2D);
         graphics2D.dispose();
     }
     public void setTileSize(int value){
@@ -152,12 +174,48 @@ public class GamePanel extends JPanel implements Runnable {
         this.objects.add(obj);
     }
 
-    public Object getObjects(int id) {
+    public Object getObject(int id) {
         for (Object tmp : objects) {
             if(tmp.getId()==id){
                 return tmp;
             }
         }
         return null;
+    }
+
+    public LinkedList<Object> getObjects() {
+        return objects;
+    }
+
+    public int getGameState() {
+        return gameState;
+    }
+
+    public void setGameState(int State) {
+        this.gameState = State;
+    }
+
+    public int getAdventureState() {
+        return adventureState;
+    }
+
+    public int getFightState() {
+        return fightState;
+    }
+
+    public int getPauseState() {
+        return pauseState;
+    }
+
+    public void setNpcs(Entity npcs) {
+        this.npcs.add(npcs);
+    }
+
+    public LinkedList<Entity> getNpcs() {
+        return npcs;
+    }
+
+    public TileManager getTileManager() {
+        return tileManager;
     }
 }

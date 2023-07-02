@@ -94,9 +94,6 @@ public class TileManager {
         return tiles[value];
     }
 
-    public int getMapDataNum(int col, int row) {
-        return mapDataNum[col][row];
-    }
 
     public int getMapColData(int col,int row) {
         return mapColData[col][row];
