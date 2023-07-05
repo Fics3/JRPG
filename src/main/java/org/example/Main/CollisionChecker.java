@@ -1,15 +1,37 @@
-package org.example;
+package org.example.Main;
 
-import org.example.Entity.Entity;
+import org.example.Entity.Entity.Entity;
 import org.example.Objects.Object;
 
-import java.util.LinkedList;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 public class CollisionChecker {
-    GamePanel gamePanel;
+    GameCFG gameCFG;
+    private int mapColData[][];
+    Entity entity;
 
-    public CollisionChecker(GamePanel gamePanel) {
-        this.gamePanel = gamePanel;
+
+    public CollisionChecker(GameCFG gameCFG, Entity entity) throws IOException {
+        this.entity = entity;
+        this.gameCFG = gameCFG;
+        mapColData = new int[gameCFG.getMaxWorldCol()][gameCFG.getMaxWorldRow()];
+        getDataMap();
+    }
+    public void getDataMap() throws IOException {
+        InputStream inputStreamData = getClass().getResourceAsStream("/DataMaps/dataMap_03.txt");
+        BufferedReader bufferedReaderData = new BufferedReader(new InputStreamReader(inputStreamData));
+        for (int i = 0; i < gameCFG.getMaxWorldRow(); i++) {
+            String lineData= bufferedReaderData.readLine();
+            for (int j = 0; j < gameCFG.getMaxWorldCol(); j++) {
+
+                String[] collision=lineData.split(" ");
+                mapColData[j][i]=Integer.parseInt(collision[j]);
+            }
+        }
     }
 
     public void checkTile(Entity entity) {
@@ -18,42 +40,44 @@ public class CollisionChecker {
         int entityTopY = entity.getY() + entity.getSolidArea().y;
         int entityBotY = entity.getY() + entity.getSolidArea().y + entity.getSolidArea().height;
 
-        int entityLeftCol = entityLeftX / gamePanel.getTileSize();
-        int entityRightCol = entityRightX / gamePanel.getTileSize();
-        int entityTopRow = entityTopY / gamePanel.getTileSize();
-        int entityBotRow = entityBotY / gamePanel.getTileSize();
+        int entityLeftCol = entityLeftX / gameCFG.getTileSize();
+        int entityRightCol = entityRightX / gameCFG.getTileSize();
+        int entityTopRow = entityTopY / gameCFG.getTileSize();
+        int entityBotRow = entityBotY / gameCFG.getTileSize();
 
         int tileN1, tileN2;
         switch (entity.getDirection()) {
             case "up":
-                entityTopRow = (entityTopY - entity.getSpeed()) / gamePanel.getTileSize();
-                tileN1 = gamePanel.tileManager.getMapColData(entityLeftCol, entityTopRow);
-                tileN2 = gamePanel.tileManager.getMapColData(entityRightCol, entityTopRow);
+                entityTopRow = (entityTopY - entity.getSpeed()) / gameCFG.getTileSize();
+                tileN1 = getMapColData(entityLeftCol, entityTopRow);
+                tileN2 = getMapColData(entityRightCol, entityTopRow);
                 if (tileN1 == 1 && tileN2 == 1) {
                     entity.setCollisionOn(true);
                 }
                 break;
             case "down":
-                entityBotRow = (entityBotY + entity.getSpeed()) / gamePanel.getTileSize();
-                tileN1 = gamePanel.tileManager.getMapColData(entityLeftCol, entityBotRow);
-                tileN2 = gamePanel.tileManager.getMapColData(entityRightCol, entityBotRow);
+                entityBotRow = (entityBotY + entity.getSpeed()) / gameCFG.getTileSize();
+                tileN1 = getMapColData(entityLeftCol, entityBotRow);
+                tileN2 = getMapColData(entityRightCol, entityBotRow);
                 if (tileN1 == 1 && tileN2 == 1) {
                     entity.setCollisionOn(true);
                 }
                 break;
             case "right":
-                entityRightCol = (entityRightX + entity.getSpeed()) / gamePanel.getTileSize();
-                tileN1 = gamePanel.tileManager.getMapColData(entityRightCol, entityTopRow);
-                tileN2 = gamePanel.tileManager.getMapColData(entityRightCol, entityBotRow);
+                entityRightCol = (entityRightX + entity.getSpeed()) / gameCFG.getTileSize();
+                tileN1 = getMapColData(entityRightCol, entityTopRow);
+                tileN2 = getMapColData(entityRightCol, entityBotRow);
                 if (tileN1 == 1 && tileN2 == 1) {
+                    System.out.println(1);
                     entity.setCollisionOn(true);
                 }
                 break;
             case "left":
-                entityTopRow = (entityLeftX - entity.getSpeed()) / gamePanel.getTileSize();
-                tileN1 = gamePanel.tileManager.getMapColData(entityLeftCol, entityTopRow);
-                tileN2 = gamePanel.tileManager.getMapColData(entityLeftCol, entityBotRow);
+                entityLeftCol = (entityLeftX - entity.getSpeed()) / gameCFG.getTileSize();
+                tileN1 = getMapColData(entityLeftCol, entityTopRow);
+                tileN2 = getMapColData(entityLeftCol, entityBotRow);
                 if (tileN1 == 1 && tileN2 == 1) {
+                    System.out.println(2);
                     entity.setCollisionOn(true);
                 }
                 break;
@@ -63,8 +87,7 @@ public class CollisionChecker {
 
     public void checkObject(Entity entity, boolean player) {
         int idx = 999;
-
-        for (Object obj : gamePanel.getObjects()) {
+        for (Object obj : gameCFG.getObjects()) {
             if (obj != null) {
                 entity.setSolidArea(entity.getX() + entity.getSolidArea().x, entity.getY() + entity.getSolidArea().y);
                 obj.setSolidArea(obj.getX(), obj.getY());
@@ -112,79 +135,88 @@ public class CollisionChecker {
         }
     }
 
-    public void checkEntity(Entity entity, LinkedList<Entity> target) {
+    public int checkEntity(Entity entity, ArrayList<Entity> target) {
+        int tmpId=0;
         for (Entity npc : target) {
             entity.setSolidArea(entity.getX() + entity.getSolidArea().x, entity.getY() + entity.getSolidArea().y);
             npc.setSolidArea(npc.getX() + npc.getSolidArea().x, npc.getY() + npc.getSolidArea().y);
             switch (entity.getDirection()) {
                 case "up":
-                    entity.setSolidY(entity.getSolidArea().y - entity.getSpeed() );
+                    entity.setSolidY(entity.getSolidArea().y -= entity.getSpeed() );
                     if (entity.getSolidArea().intersects(npc.getSolidArea())) {
-                        System.out.println("up col");
+//                        System.out.println("up col");
                         entity.setCollisionOn(true);
+                        tmpId=npc.getId();
                     }
                     break;
                 case "down":
                     entity.setSolidY(entity.getSolidArea().y += entity.getSpeed() );
                     if (entity.getSolidArea().intersects(npc.getSolidArea())) {
+//                        System.out.println("DOWN");
                         entity.setCollisionOn(true);
-
+                        tmpId=npc.getId();
                     }
                     break;
                 case "right":
                     entity.setSolidX(entity.getSolidArea().x += entity.getSpeed() );
                     if (entity.getSolidArea().intersects(npc.getSolidArea())) {
+//                        System.out.println("RIGHT");
                         entity.setCollisionOn(true);
-
+                        tmpId=npc.getId();
                     }
                     break;
                 case "left":
                     entity.setSolidX(entity.getSolidArea().x -= entity.getSpeed() );
                     if (entity.getSolidArea().intersects(npc.getSolidArea())) {
+//                        System.out.println("left");
                         entity.setCollisionOn(true);
+                        tmpId=npc.getId();
                     }
                     break;
             }
             entity.setSolidArea(entity.getSolidDefaultX(), entity.getSolidDefaultY());
             npc.setSolidArea(npc.getSolidDefaultX(), npc.getSolidDefaultX());
         }
-
+        return tmpId;
     }
-    public void checkPlayer(Entity entity){
-            entity.setSolidArea(entity.getX() + entity.getSolidArea().x, entity.getY() + entity.getSolidArea().y);
-            gamePanel.getPlayer().setSolidArea(gamePanel.getPlayer().getX() + gamePanel.getPlayer().getSolidArea().x,
-                    gamePanel.getPlayer().getY() + gamePanel.getPlayer().getSolidArea().y);
-            switch (entity.getDirection()) {
-                case "up":
-                    entity.setSolidY(entity.getSolidArea().y - entity.getSpeed() / 2);
-                    if (entity.getSolidArea().intersects(gamePanel.getPlayer().getSolidArea())) {
-                        System.out.println("up col");
-                        entity.setCollisionOn(true);
-                    }
-                    break;
-                case "down":
-                    entity.setSolidY(entity.getSolidArea().y += entity.getSpeed() / 2);
-                    if (entity.getSolidArea().intersects(gamePanel.getPlayer().getSolidArea())) {
-                        entity.setCollisionOn(true);
-
-                    }
-                    break;
-                case "right":
-                    entity.setSolidX(entity.getSolidArea().x += entity.getSpeed() / 2);
-                    if (entity.getSolidArea().intersects(gamePanel.getPlayer().getSolidArea())) {
-                        entity.setCollisionOn(true);
-
-                    }
-                    break;
-                case "left":
-                    entity.setSolidX(entity.getSolidArea().x -= entity.getSpeed() / 2);
-                    if (entity.getSolidArea().intersects(gamePanel.getPlayer().getSolidArea())) {
-                        entity.setCollisionOn(true);
-                    }
-                    break;
-            }
-            entity.setSolidArea(entity.getSolidDefaultX(), entity.getSolidDefaultY());
-            gamePanel.getPlayer().setSolidArea(gamePanel.getPlayer().getSolidDefaultX(), gamePanel.getPlayer().getSolidDefaultX());
+//    public void checkPlayer(Entity entity){
+//            entity.setSolidArea(entity.getX() + entity.getSolidArea().x, entity.getY() + entity.getSolidArea().y);
+//            gameCFG.getPlayer().setSolidArea(gameCFG.getPlayer().getX() + gameCFG.getPlayer().getSolidArea().x,
+//                    gameCFG.getPlayer().getY() + gameCFG.getPlayer().getSolidArea().y);
+//            switch (entity.getDirection()) {
+//                case "up":
+//                    entity.setSolidY(entity.getSolidArea().y - entity.getSpeed() / 2);
+//                    if (entity.getSolidArea().intersects(gameCFG.getPlayer().getSolidArea())) {
+//                        System.out.println("up col");
+//                        entity.setCollisionOn(true);
+//                    }
+//                    break;
+//                case "down":
+//                    entity.setSolidY(entity.getSolidArea().y += entity.getSpeed() / 2);
+//                    if (entity.getSolidArea().intersects(gameCFG.getPlayer().getSolidArea())) {
+//                        entity.setCollisionOn(true);
+//
+//                    }
+//                    break;
+//                case "right":
+//                    entity.setSolidX(entity.getSolidArea().x += entity.getSpeed() / 2);
+//                    if (entity.getSolidArea().intersects(gameCFG.getPlayer().getSolidArea())) {
+//                        entity.setCollisionOn(true);
+//
+//                    }
+//                    break;
+//                case "left":
+//                    entity.setSolidX(entity.getSolidArea().x -= entity.getSpeed() / 2);
+//                    if (entity.getSolidArea().intersects(gameCFG.getPlayer().getSolidArea())) {
+//                        entity.setCollisionOn(true);
+//                    }
+//                    break;
+//            }
+//            entity.setSolidArea(entity.getSolidDefaultX(), entity.getSolidDefaultY());
+//            gameCFG.getPlayer().setSolidArea(gameCFG.getPlayer().getSolidDefaultX(), gameCFG.getPlayer().getSolidDefaultX());
+//    }
+    public int getMapColData(int col,int row) {
+        return mapColData[col][row];
     }
 }
 

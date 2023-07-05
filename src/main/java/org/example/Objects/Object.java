@@ -1,43 +1,32 @@
 package org.example.Objects;
 
-import org.example.GamePanel;
-import org.example.Tiles.TileManager;
+import org.example.Main.GameCFG;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.awt.Rectangle;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class Object {
-    private BufferedImage image;
     private int id;
     private int X,Y;
     private boolean collision;
-    private boolean isVisible=false;
+    private String name;
+    GameCFG gameCFG;
     private Rectangle solidArea=new Rectangle(0,0,24,16);
     private  int solidAreaDefaultX, solidAreaDefaultY;
-
-    GamePanel gamePanel;
-
-    public Object(GamePanel gamePanel) {
-        this.gamePanel=gamePanel;
-    }
+    private ArrayList<Integer> possibleObjects = new ArrayList<>();
+    ObjectView objectView;
 
 
-    public void draw(Graphics2D graphics2D, GamePanel gamePanel) {
-        if(this.isVisible) {
-            if (Y + gamePanel.getTileSize() > gamePanel.getPlayer().getY() - gamePanel.getPlayer().getScreenY() &&
-                    Y - gamePanel.getTileSize() < gamePanel.getPlayer().getY() + gamePanel.getPlayer().getScreenY() &&
-                     X+ gamePanel.getTileSize() > gamePanel.getPlayer().getX() - gamePanel.getPlayer().getScreenX() &&
-                    X - gamePanel.getTileSize() < gamePanel.getPlayer().getX() + gamePanel.getPlayer().getScreenX()) {
-                int screenX = X - gamePanel.getPlayer().getX() + gamePanel.getPlayer().getScreenX();
-                int screenY = Y - gamePanel.getPlayer().getY() + gamePanel.getPlayer().getScreenY();
-                graphics2D.drawImage(image, screenX, screenY, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
-            }
+
+    public Object(GameCFG gameCFG, int id) throws IOException {
+        this.gameCFG = gameCFG;
+        setCollision(true);
+        if(id == 2) {
+            setName("chest");
+            objectView = new ObjectView(gameCFG,"chest");
         }
     }
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public int getId() {
         return id;
     }
@@ -58,21 +47,8 @@ public class Object {
         return Y;
     }
 
-    public void setImage(BufferedImage image) {
-        this.image = image;
-    }
 
-    public BufferedImage getImage() {
-        return image;
-    }
 
-    public boolean isVisible() {
-        return isVisible;
-    }
-
-    public void setVisible(boolean visible) {
-        isVisible = visible;
-    }
 
     public Rectangle getSolidArea() {
         return solidArea;
@@ -110,5 +86,25 @@ public class Object {
     public void setSolidAreaDefault(int i,int i1) {
         solidAreaDefaultX=i;
         solidAreaDefaultY=i1;
+    }
+
+    public ArrayList<Integer> getPossibleObjects() {
+        return possibleObjects;
+    }
+
+    public void setPossibleObjects(ArrayList<Integer> possibleObjects) {
+        this.possibleObjects = possibleObjects;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public ObjectView getObjectView() {
+        return objectView;
     }
 }

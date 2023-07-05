@@ -1,4 +1,7 @@
-package org.example;
+package org.example.Main;
+
+import org.example.Main.GamePanel;
+
 import javax.swing.*;
 import java.io.IOException;
 
@@ -17,6 +20,7 @@ public class Main {
          window.setLocationRelativeTo(null);
          window.setVisible(true);
          gamePanel.setupGame();
+//         gamePanel.getGameCFG().setupGame();
          gamePanel.startGameThread();
     }
 

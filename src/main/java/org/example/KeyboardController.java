@@ -1,16 +1,19 @@
 package org.example;
 
+import org.example.Main.GameCFG;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class KeyboardController implements KeyListener {
-
-    GamePanel gamePanel;
+    
 
     private boolean upPressed,downPressed,leftPressed, rightPressed;
+    private boolean dialogue = false;
+    private GameCFG gameCFG;
 
-    public KeyboardController(GamePanel gamePanel){
-        this.gamePanel=gamePanel;
+    public KeyboardController(GameCFG gameCFG){
+        this.gameCFG=gameCFG;
     }
     @Override
     public void keyTyped(KeyEvent e) {
@@ -20,27 +23,38 @@ public class KeyboardController implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
-        if(code == KeyEvent.VK_W){
-            upPressed=true;
-        }
-        if(code == KeyEvent.VK_A){
-            leftPressed=true;
-        }
-        if(code == KeyEvent.VK_S){
-            downPressed=true;
-        }
-        if(code == KeyEvent.VK_D){
-            rightPressed=true;
-        }
-        if(code == KeyEvent.VK_ESCAPE){
-            if(gamePanel.getGameState() == gamePanel.getAdventureState()){
-                gamePanel.setGameState(gamePanel.getPauseState());
+        if (gameCFG.getGameState() == gameCFG.getAdventureState()) {
+            if (code == KeyEvent.VK_W) {
+                upPressed = true;
             }
-            else if(gamePanel.getGameState()== gamePanel.getPauseState()){
-                gamePanel.setGameState(gamePanel.getAdventureState());
-                System.out.println(gamePanel.getGameState());
+            if (code == KeyEvent.VK_A) {
+                leftPressed = true;
+            }
+            if (code == KeyEvent.VK_S) {
+                downPressed = true;
+            }
+            if (code == KeyEvent.VK_D) {
+                rightPressed = true;
+            }
+
+            if(code == KeyEvent.VK_ESCAPE){
+                gameCFG.setGameState(gameCFG.getPauseState());
+            }
+            if(code == KeyEvent.VK_SPACE && gameCFG.getPlayer().isCollisionOn()){
+                System.out.println(1);
+                dialogue=true;
+//                gameCFG.setGameState(gameCFG.getDialogueState());
             }
         }
+            else if(gameCFG.getGameState() == gameCFG.getPauseState()) {
+                if (code == KeyEvent.VK_ESCAPE) {
+                    gameCFG.setGameState(gameCFG.getAdventureState());
+                }
+            }
+            else if(code == KeyEvent.VK_SPACE&& gameCFG.getGameState()==gameCFG.getDialogueState()){
+                    gameCFG.setGameState(gameCFG.getAdventureState());
+                    setDialogue(false);
+            }
     }
 
     @Override
@@ -86,5 +100,13 @@ public class KeyboardController implements KeyListener {
 
     public void setRightPressed(boolean rightPressed) {
         this.rightPressed = rightPressed;
+    }
+
+    public boolean isDialogue() {
+        return dialogue;
+    }
+
+    public void setDialogue(boolean dialogue) {
+        this.dialogue = dialogue;
     }
 }

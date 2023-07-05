@@ -1,6 +1,6 @@
 package org.example.Tiles;
 
-import org.example.GamePanel;
+import org.example.Main.GameCFG;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -13,18 +13,14 @@ import java.util.Objects;
 
 public class TileManager {
 
-    private GamePanel gamePanel;
     private Tile[] tiles;
     private int mapDataNum[][];
+    GameCFG gameCFG;
 
-    private int mapColData[][];
-
-    public TileManager(GamePanel gamePanel) throws IOException {
-
-        this.gamePanel=gamePanel;
+    public TileManager(GameCFG gameCFG) throws IOException {
+        this.gameCFG = gameCFG;
         tiles=new Tile[53];
-        mapDataNum = new int[gamePanel.getMaxWorldCol()][gamePanel.getMaxWorldRow()];
-        mapColData = new int[gamePanel.getMaxWorldCol()][gamePanel.getMaxWorldRow()];
+        mapDataNum = new int[gameCFG.getMaxWorldCol()][gameCFG.getMaxWorldRow()];
         loadMap("/Maps/map_03.txt");
         getTileImage();
 
@@ -36,9 +32,9 @@ public class TileManager {
             if(i>=10){
             tiles[i].setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Tiles/Outdoors_"+i+".png"))));}
             else tiles[i].setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Tiles/Outdoors_"+"0"+i+".png"))));
-        BufferedImage scaledImage = new BufferedImage(gamePanel.getTileSize(),gamePanel.getTileSize(),tiles[i].getImage().getType());
+        BufferedImage scaledImage = new BufferedImage(gameCFG.getTileSize(),gameCFG.getTileSize(),tiles[i].getImage().getType());
         Graphics2D graphics2D = scaledImage.createGraphics();
-        graphics2D.drawImage(tiles[i].getImage(),0,0,gamePanel.getTileSize(),gamePanel.getTileSize(),null);
+        graphics2D.drawImage(tiles[i].getImage(),0,0,gameCFG.getTileSize(),gameCFG.getTileSize(),null);
         tiles[i].setImage(scaledImage);
     }
     }
@@ -46,17 +42,10 @@ public class TileManager {
         try {
             InputStream inputStream = getClass().getResourceAsStream(filepath);
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-            InputStream inputStreamData = getClass().getResourceAsStream("/DataMaps/dataMap_"+filepath.substring(10,12)+".txt");
-            BufferedReader bufferedReaderData = new BufferedReader(new InputStreamReader(inputStreamData));
-            for (int i = 0; i < gamePanel.getMaxWorldRow(); i++) {
-                String lineData= bufferedReaderData.readLine();
+            for (int i = 0; i < gameCFG.getMaxWorldRow(); i++) {
                 String line = bufferedReader.readLine();
-                for (int j = 0; j < gamePanel.getMaxWorldCol(); j++) {
-
-                    String[] collision=lineData.split(" ");
+                for (int j = 0; j < gameCFG.getMaxWorldCol(); j++) {
                     String[] data = line.split(" ");
-
-                    mapColData[j][i]=Integer.parseInt(collision[j]);
                     mapDataNum[j][i]=Integer.parseInt(data[j]);
                 }
             }
@@ -67,18 +56,16 @@ public class TileManager {
     }
     public void draw(Graphics2D graphics2D){
 
-
-        for (int i = 0; i < gamePanel.getMaxWorldCol(); i++) {
-            for (int j = 0; j < gamePanel.getMaxWorldRow(); j++) {
-                int worldX=i*gamePanel.getTileSize();
-                int worldY=j*gamePanel.getTileSize();
-                if (worldY+gamePanel.getTileSize() > gamePanel.getPlayer().getY() - gamePanel.getPlayer().getScreenY() &&
-                        worldY-gamePanel.getTileSize()< gamePanel.getPlayer().getY() + gamePanel.getPlayer().getScreenY() &&
-                        worldX+gamePanel.getTileSize() > gamePanel.getPlayer().getX() - gamePanel.getPlayer().getScreenX() &&
-                        worldX -gamePanel.getTileSize()< gamePanel.getPlayer().getX() + gamePanel.getPlayer().getScreenX()) {
-                    int screenX = worldX - gamePanel.getPlayer().getX() + gamePanel.getPlayer().getScreenX();
-                    int screenY = worldY - gamePanel.getPlayer().getY() + gamePanel.getPlayer().getScreenY();
-
+        for (int i = 0; i < gameCFG.getMaxWorldCol(); i++) {
+            for (int j = 0; j < gameCFG.getMaxWorldRow(); j++) {
+                int worldX=i*gameCFG.getTileSize();
+                int worldY=j*gameCFG.getTileSize();
+                if (worldY+gameCFG.getTileSize() > gameCFG.getPlayer().getY() - gameCFG.getPlayer().getPlayerView().getScreenY() &&
+                        worldY-gameCFG.getTileSize()< gameCFG.getPlayer().getY() + gameCFG.getPlayer().getPlayerView().getScreenY() &&
+                        worldX+gameCFG.getTileSize() > gameCFG.getPlayer().getX() - gameCFG.getPlayer().getPlayerView().getScreenX() &&
+                        worldX -gameCFG.getTileSize()< gameCFG.getPlayer().getX() + gameCFG.getPlayer().getPlayerView().getScreenX()) {
+                    int screenX = worldX - gameCFG.getPlayer().getX() + gameCFG.getPlayer().getPlayerView().getScreenX();
+                    int screenY = worldY - gameCFG.getPlayer().getY() + gameCFG.getPlayer().getPlayerView().getScreenY();
                     graphics2D.drawImage(tiles[mapDataNum[i][j]].getImage(), screenX, screenY, null);
                 }
             }
@@ -92,10 +79,5 @@ public class TileManager {
 
     public Tile getTiles(int value) {
         return tiles[value];
-    }
-
-
-    public int getMapColData(int col,int row) {
-        return mapColData[col][row];
     }
 }
