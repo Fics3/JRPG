@@ -1,4 +1,4 @@
-package org.example.Tiles;
+package org.example.View.Tiles;
 
 import java.awt.image.BufferedImage;
 

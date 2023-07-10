@@ -1,7 +1,7 @@
 //package org.example.Entity;
 //
 //import org.example.main.GameCFG;
-//import org.example.Main.GamePanel;
+//import org.example.View.GamePanel;
 //
 //import java.io.IOException;
 //

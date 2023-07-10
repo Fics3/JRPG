@@ -1,6 +1,7 @@
-package org.example.Objects;
+package org.example.Model;
 
-import org.example.Main.GameCFG;
+import org.example.Model.Main.GameCFG;
+import org.example.View.ObjectView;
 
 import java.awt.Rectangle;
 import java.io.IOException;
@@ -15,7 +16,6 @@ public class Object {
     private Rectangle solidArea=new Rectangle(0,0,24,16);
     private  int solidAreaDefaultX, solidAreaDefaultY;
     private ArrayList<Integer> possibleObjects = new ArrayList<>();
-    ObjectView objectView;
 
 
 
@@ -24,7 +24,6 @@ public class Object {
         setCollision(true);
         if(id == 2) {
             setName("chest");
-            objectView = new ObjectView(gameCFG,"chest");
         }
     }
     public int getId() {
@@ -104,7 +103,4 @@ public class Object {
         this.name = name;
     }
 
-    public ObjectView getObjectView() {
-        return objectView;
-    }
 }

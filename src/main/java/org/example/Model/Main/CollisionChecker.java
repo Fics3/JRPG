@@ -1,7 +1,7 @@
-package org.example.Main;
+package org.example.Model.Main;
 
-import org.example.Entity.Entity.Entity;
-import org.example.Objects.Object;
+import org.example.Model.Entity.Entity;
+import org.example.Model.Object;
 
 import java.io.BufferedReader;
 import java.io.IOException;

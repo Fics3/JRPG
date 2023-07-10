@@ -1,7 +1,8 @@
-package org.example.Entity.EntityView;
+package org.example.View.EntityView;
 
-import org.example.Main.GameCFG;
-import org.example.UtilityTools;
+
+import org.example.View.GamePanel;
+import org.example.View.UtilityTools;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -17,19 +18,17 @@ public class PlayerView extends EntityView {
     private String direction ="up";
     private int spriteNum=2;
     private int spriteCycle = 0;
+    private int fightComNum = 0;
 
     private BufferedImage upStay, up1, up2,downStay, down1,down2,leftStay,left1,left2,rightStay,right1,right2;
-    GameCFG gameCFG;
-    public PlayerView(GameCFG gameCFG) throws IOException {
-        super(gameCFG);
-        this.gameCFG = gameCFG;
-        screenX=gameCFG.getScreenWight()/2-(gameCFG.getTileSize()/2);
-        screenY=gameCFG.getScreenHeight()/2-(gameCFG.getTileSize()/2);
+    public PlayerView(GamePanel gamePanel) throws IOException {
+        super(gamePanel);
+        screenX=gamePanel.getGameCFG().getScreenWight()/2-(gamePanel.getGameCFG().getTileSize()/2);
+        screenY=gamePanel.getGameCFG().getScreenHeight()/2-(gamePanel.getGameCFG().getTileSize()/2);
         getPlayerImage();
     }
 
     public void getPlayerImage() throws IOException {
-        try {
             this.setDown1(setupPlayer("FWalk1"));
             this.setDownStay(setupPlayer("FStay"));
             this.setDown2(setupPlayer("FWalk2"));
@@ -43,38 +42,36 @@ public class PlayerView extends EntityView {
             this.setRightStay(setupPlayer("RStay"));
             this.setRight2(setupPlayer("RWalk2"));
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
     }
     public BufferedImage setupPlayer(String imageName) throws IOException {
         UtilityTools utilityTools = new UtilityTools();
         BufferedImage image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Player/"+imageName+".png")));
-        return utilityTools.scaleImage(image, gameCFG.getTileSize(),gameCFG.getTileSize());
+        return utilityTools.scaleImage(image, getGamePanel().getGameCFG().getTileSize(),getGamePanel().getGameCFG().getTileSize());
     }
     public void draw(Graphics2D graphics2D){
 
         BufferedImage image = null;
-        switch (gameCFG.getPlayer().getDirection()) {
+        switch (getGamePanel().getGameCFG().getPlayer().getDirection()) {
             case "up":
-                if(gameCFG.getPlayer().getSpriteNum()==1) image=getUp1();
-                else if(gameCFG.getPlayer().getSpriteNum()==2)image=getUpStay();
-                else if(gameCFG.getPlayer().getSpriteNum()==3)image=getUp2();
+                if(getGamePanel().getGameCFG().getPlayer().getSpriteNum()==1) image=getUp1();
+                else if(getGamePanel().getGameCFG().getPlayer().getSpriteNum()==2)image=getUpStay();
+                else if(getGamePanel().getGameCFG().getPlayer().getSpriteNum()==3)image=getUp2();
                 break;
             case "down":
-                if(gameCFG.getPlayer().getSpriteNum()==1) image=getDown1();
-                else if(gameCFG.getPlayer().getSpriteNum()==2)image=getDownStay();
-                else if(gameCFG.getPlayer().getSpriteNum()==3)image=getDown2();
+                if(getGamePanel().getGameCFG().getPlayer().getSpriteNum()==1) image=getDown1();
+                else if(getGamePanel().getGameCFG().getPlayer().getSpriteNum()==2)image=getDownStay();
+                else if(getGamePanel().getGameCFG().getPlayer().getSpriteNum()==3)image=getDown2();
                 break;
             case "left":
-                if(gameCFG.getPlayer().getSpriteNum()==1) image=getLeft1();
-                else if(gameCFG.getPlayer().getSpriteNum()==2)image=getLeftStay();
-                else if(gameCFG.getPlayer().getSpriteNum()==3)image=getLeft2();
+                if(getGamePanel().getGameCFG().getPlayer().getSpriteNum()==1) image=getLeft1();
+                else if(getGamePanel().getGameCFG().getPlayer().getSpriteNum()==2)image=getLeftStay();
+                else if(getGamePanel().getGameCFG().getPlayer().getSpriteNum()==3)image=getLeft2();
                 break;
             case "right" :
-                if(gameCFG.getPlayer().getSpriteNum()==1) image=getRight1();
-                else if(gameCFG.getPlayer().getSpriteNum()==2)image=getRightStay();
-                else if(gameCFG.getPlayer().getSpriteNum()==3)image=getRight2();
+                if(getGamePanel().getGameCFG().getPlayer().getSpriteNum()==1) image=getRight1();
+                else if(getGamePanel().getGameCFG().getPlayer().getSpriteNum()==2)image=getRightStay();
+                else if(getGamePanel().getGameCFG().getPlayer().getSpriteNum()==3)image=getRight2();
                 break;
         }
         graphics2D.drawImage(image, screenX, screenY,null);

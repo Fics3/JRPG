@@ -1,6 +1,6 @@
-package org.example.Entity.Entity;
+package org.example.Model.Entity;
 
-import org.example.Main.GameCFG;
+import org.example.Model.Main.GameCFG;
 
 import java.util.Random;
 

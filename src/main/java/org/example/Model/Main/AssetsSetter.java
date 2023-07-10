@@ -1,7 +1,7 @@
-package org.example.Main;
+package org.example.Model.Main;
 
-import org.example.Entity.Entity.Entity;
-import org.example.Objects.Object;
+import org.example.Model.Entity.Entity;
+import org.example.Model.Object;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -59,8 +59,13 @@ public class AssetsSetter {
         }
     }
     public void setNpc() throws IOException {
-        gameCFG.setNpcs(new Entity(gameCFG,"GreenBoy",gameCFG.getMaxWorldWight()/2,gameCFG.getMaxWorldHeight()/2+ gameCFG.getTileSize()*2,2));
+        gameCFG.setNpcs(new Entity(gameCFG,false,"GreenBoy",gameCFG.getMaxWorldWight()/2,gameCFG.getMaxWorldHeight()/2+ gameCFG.getTileSize()*2,2));
                 //,"GreenBoy",gameCFG.getMaxWorldWight()/2,gameCFG.getMaxWorldHeight()/2+ gameCFG.getTileSize()*2)) ;
+    }
+    public void setEnemy() throws IOException {
+        gameCFG.setNpcs(new Entity(gameCFG,true,"GreenBoy",gameCFG.getMaxWorldWight()/2+gameCFG.getTileSize(),gameCFG.getMaxWorldHeight()/2+ gameCFG.getTileSize()*4,3));
+
+        gameCFG.setNpcs(new Entity(gameCFG,true,"GreenBoy",gameCFG.getMaxWorldWight()/2+gameCFG.getTileSize(),gameCFG.getMaxWorldHeight()/2+ gameCFG.getTileSize()*3,3));
     }
 
     public int getMapColData(int i,int i1) {

@@ -1,9 +1,9 @@
-package org.example.Entity.EntityView;
+package org.example.View.EntityView;
 
-import org.example.Entity.Entity.Entity;
-import org.example.Main.GameCFG;
+import org.example.Model.Entity.Entity;
 
-import org.example.UtilityTools;
+import org.example.View.GamePanel;
+import org.example.View.UtilityTools;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -13,62 +13,64 @@ import java.util.Objects;
 
 public class EntityView {
     private int spriteNum=2;
-    private GameCFG gameCFG;
+    String name;
+    private GamePanel gamePanel;
     private BufferedImage upStay, up1, up2,downStay, down1,down2,leftStay,left1,left2,rightStay,right1,right2;
     private Entity entity;
 //    String name = "GreenBoy";
 
-    public EntityView(GameCFG gameCFG) {
-        this.gameCFG=gameCFG;
+    public EntityView(GamePanel gamePanel) {
+        this.gamePanel=gamePanel;
 //        getImages(name);
 //        setup(name);
     }
-    public EntityView(GameCFG gameCFG, Entity entity) throws IOException {
-        this.gameCFG=gameCFG;
+    public EntityView(GamePanel gamePanel, Entity entity) throws IOException {
+        this.gamePanel=gamePanel;
         this.entity=entity;
         getImages(entity.getName());
-        
+        setName(entity.getName());
     }
 
-    public void draw(Graphics2D graphics2D) {
+    public void draw(Graphics2D graphics2D) throws IOException {
         BufferedImage image = null;
-        if (entity.getX() + gameCFG.getTileSize() > gameCFG.getPlayer().getY() - gameCFG.getPlayer().getPlayerView().getScreenY() &&
-                entity.getY() - gameCFG.getTileSize() < gameCFG.getPlayer().getY() + gameCFG.getPlayer().getPlayerView().getScreenY() &&
-                entity.getX() + gameCFG.getTileSize() > gameCFG.getPlayer().getX() - gameCFG.getPlayer().getPlayerView().getScreenX() &&
-                entity.getY() - gameCFG.getTileSize() < gameCFG.getPlayer().getX() +gameCFG.getPlayer().getPlayerView().getScreenX()) {
+        if (entity.getX() + gamePanel.getGameCFG().getTileSize() > gamePanel.getGameCFG().getPlayer().getX() -gamePanel.getPlayerView().getScreenX() &&
+                entity.getY() - gamePanel.getGameCFG().getTileSize() < gamePanel.getGameCFG().getPlayer().getY() +gamePanel.getPlayerView().getScreenY() &&
+                entity.getX() + gamePanel.getGameCFG().getTileSize() > gamePanel.getGameCFG().getPlayer().getX() -gamePanel.getPlayerView().getScreenX() &&
+                entity.getY() - gamePanel.getGameCFG().getTileSize() < gamePanel.getGameCFG().getPlayer().getY() +gamePanel.getPlayerView().getScreenY()) {
 
-            int screenX = entity.getX() - gameCFG.getPlayer().getX() + gameCFG.getPlayer().getPlayerView().getScreenX();
-            int screenY = entity.getY() - gameCFG.getPlayer().getY() + gameCFG.getPlayer().getPlayerView().getScreenY();
+            int screenX = entity.getX() - gamePanel.getGameCFG().getPlayer().getX() +gamePanel.getPlayerView().getScreenX();
+            int screenY = entity.getY() - gamePanel.getGameCFG().getPlayer().getY() +gamePanel.getPlayerView().getScreenY();
             switch (entity.getDirection()) {
                 case "up":
-                    if (getSpriteNum() == 1) image = getUp1();
-                    else if (getSpriteNum() == 2) image = getUpStay();
-                    else if (getSpriteNum() == 3) image = getUp2();
+                    if (entity.getSpriteNum() == 1) image = getUp1();
+                    else if (entity.getSpriteNum() == 2) image = getUpStay();
+                    else if (entity.getSpriteNum() == 3) image = getUp2();
                     break;
                 case "down":
-                    if (getSpriteNum() == 1) image = getDown1();
-                    else if (getSpriteNum() == 2) image = getDownStay();
-                    else if (getSpriteNum() == 3) image = getDown2();
+                    if (entity.getSpriteNum() == 1) image = getDown1();
+                    else if (entity.getSpriteNum() == 2) image = getDownStay();
+                    else if (entity.getSpriteNum() == 3) image = getDown2();
                     break;
                 case "left":
-                    if (getSpriteNum() == 1) image = getLeft1();
-                    else if (getSpriteNum() == 2) image = getLeftStay();
-                    else if (getSpriteNum() == 3) image = getLeft2();
+                    if (entity.getSpriteNum() == 1) image = getLeft1();
+                    else if (entity.getSpriteNum() == 2) image = getLeftStay();
+                    else if (entity.getSpriteNum() == 3) image = getLeft2();
                     break;
                 case "right":
-                    if (getSpriteNum() == 1) image = getRight1();
-                    else if (getSpriteNum() == 2) image = getRightStay();
-                    else if (getSpriteNum() == 3) image = getRight2();
+                    if (entity.getSpriteNum() == 1) image = getRight1();
+                    else if (entity.getSpriteNum() == 2) image = getRightStay();
+                    else if (entity.getSpriteNum() == 3) image = getRight2();
                     break;
             }
             graphics2D.drawImage(image, screenX, screenY, null);
         }
 
+
     }
     public BufferedImage setup(String imageName) throws IOException {
         UtilityTools utilityTools = new UtilityTools();
         BufferedImage image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/NPC/"+imageName+".png")));
-        return utilityTools.scaleImage(image,gameCFG.getTileSize(),gameCFG.getTileSize());
+        return utilityTools.scaleImage(image,gamePanel.getGameCFG().getTileSize(),gamePanel.getGameCFG().getTileSize());
     }
     public void getImages(String name) throws IOException {
         try {
@@ -90,7 +92,6 @@ public class EntityView {
             e.printStackTrace();
         }
     }
-
 
     public int getSpriteNum() {
         return spriteNum;
@@ -193,5 +194,17 @@ public class EntityView {
 
     public void setRightStay(BufferedImage rightStay) {
         this.rightStay = rightStay;
+    }
+
+    public GamePanel getGamePanel() {
+        return gamePanel;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 }

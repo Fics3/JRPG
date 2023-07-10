@@ -1,6 +1,6 @@
-package org.example.Main;
+package org.example.View;
 
-import org.example.Main.GamePanel;
+import org.example.View.GamePanel;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -15,12 +15,12 @@ public class Main {
 
          GamePanel gamePanel= new GamePanel();
          window.add(gamePanel);
+//         window.add(gamePanel.getFightView());
          window.pack();
 
          window.setLocationRelativeTo(null);
          window.setVisible(true);
          gamePanel.setupGame();
-//         gamePanel.getGameCFG().setupGame();
          gamePanel.startGameThread();
     }
 

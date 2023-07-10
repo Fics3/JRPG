@@ -1,6 +1,6 @@
-package org.example.Tiles;
+package org.example.View.Tiles;
 
-import org.example.Main.GameCFG;
+import org.example.View.GamePanel;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -15,12 +15,12 @@ public class TileManager {
 
     private Tile[] tiles;
     private int mapDataNum[][];
-    GameCFG gameCFG;
+    GamePanel gamePanel;
 
-    public TileManager(GameCFG gameCFG) throws IOException {
-        this.gameCFG = gameCFG;
+    public TileManager(GamePanel gamePanel) throws IOException {
+        this.gamePanel = gamePanel;
         tiles=new Tile[53];
-        mapDataNum = new int[gameCFG.getMaxWorldCol()][gameCFG.getMaxWorldRow()];
+        mapDataNum = new int[gamePanel.getGameCFG().getMaxWorldCol()][gamePanel.getGameCFG().getMaxWorldRow()];
         loadMap("/Maps/map_03.txt");
         getTileImage();
 
@@ -32,9 +32,9 @@ public class TileManager {
             if(i>=10){
             tiles[i].setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Tiles/Outdoors_"+i+".png"))));}
             else tiles[i].setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Tiles/Outdoors_"+"0"+i+".png"))));
-        BufferedImage scaledImage = new BufferedImage(gameCFG.getTileSize(),gameCFG.getTileSize(),tiles[i].getImage().getType());
+        BufferedImage scaledImage = new BufferedImage(gamePanel.getGameCFG().getTileSize(),gamePanel.getGameCFG().getTileSize(),tiles[i].getImage().getType());
         Graphics2D graphics2D = scaledImage.createGraphics();
-        graphics2D.drawImage(tiles[i].getImage(),0,0,gameCFG.getTileSize(),gameCFG.getTileSize(),null);
+        graphics2D.drawImage(tiles[i].getImage(),0,0,gamePanel.getGameCFG().getTileSize(),gamePanel.getGameCFG().getTileSize(),null);
         tiles[i].setImage(scaledImage);
     }
     }
@@ -42,9 +42,9 @@ public class TileManager {
         try {
             InputStream inputStream = getClass().getResourceAsStream(filepath);
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-            for (int i = 0; i < gameCFG.getMaxWorldRow(); i++) {
+            for (int i = 0; i < gamePanel.getGameCFG().getMaxWorldRow(); i++) {
                 String line = bufferedReader.readLine();
-                for (int j = 0; j < gameCFG.getMaxWorldCol(); j++) {
+                for (int j = 0; j < gamePanel.getGameCFG().getMaxWorldCol(); j++) {
                     String[] data = line.split(" ");
                     mapDataNum[j][i]=Integer.parseInt(data[j]);
                 }
@@ -56,16 +56,16 @@ public class TileManager {
     }
     public void draw(Graphics2D graphics2D){
 
-        for (int i = 0; i < gameCFG.getMaxWorldCol(); i++) {
-            for (int j = 0; j < gameCFG.getMaxWorldRow(); j++) {
-                int worldX=i*gameCFG.getTileSize();
-                int worldY=j*gameCFG.getTileSize();
-                if (worldY+gameCFG.getTileSize() > gameCFG.getPlayer().getY() - gameCFG.getPlayer().getPlayerView().getScreenY() &&
-                        worldY-gameCFG.getTileSize()< gameCFG.getPlayer().getY() + gameCFG.getPlayer().getPlayerView().getScreenY() &&
-                        worldX+gameCFG.getTileSize() > gameCFG.getPlayer().getX() - gameCFG.getPlayer().getPlayerView().getScreenX() &&
-                        worldX -gameCFG.getTileSize()< gameCFG.getPlayer().getX() + gameCFG.getPlayer().getPlayerView().getScreenX()) {
-                    int screenX = worldX - gameCFG.getPlayer().getX() + gameCFG.getPlayer().getPlayerView().getScreenX();
-                    int screenY = worldY - gameCFG.getPlayer().getY() + gameCFG.getPlayer().getPlayerView().getScreenY();
+        for (int i = 0; i < gamePanel.getGameCFG().getMaxWorldCol(); i++) {
+            for (int j = 0; j < gamePanel.getGameCFG().getMaxWorldRow(); j++) {
+                int worldX=i*gamePanel.getGameCFG().getTileSize();
+                int worldY=j*gamePanel.getGameCFG().getTileSize();
+                if (worldY+gamePanel.getGameCFG().getTileSize() > gamePanel.getGameCFG().getPlayer().getY() - gamePanel.getPlayerView().getScreenY() &&
+                        worldY-gamePanel.getGameCFG().getTileSize()< gamePanel.getGameCFG().getPlayer().getY() + gamePanel.getPlayerView().getScreenY() &&
+                        worldX+gamePanel.getGameCFG().getTileSize() > gamePanel.getGameCFG().getPlayer().getX() - gamePanel.getPlayerView().getScreenX() &&
+                        worldX -gamePanel.getGameCFG().getTileSize()< gamePanel.getGameCFG().getPlayer().getX() + gamePanel.getPlayerView().getScreenX()) {
+                    int screenX = worldX - gamePanel.getGameCFG().getPlayer().getX() + gamePanel.getPlayerView().getScreenX();
+                    int screenY = worldY - gamePanel.getGameCFG().getPlayer().getY() + gamePanel.getPlayerView().getScreenY();
                     graphics2D.drawImage(tiles[mapDataNum[i][j]].getImage(), screenX, screenY, null);
                 }
             }

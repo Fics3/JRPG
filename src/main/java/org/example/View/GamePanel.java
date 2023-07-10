@@ -1,33 +1,42 @@
-package org.example.Main;
+package org.example.View;
 
-import org.example.Entity.Entity.Entity;
-import org.example.Objects.Object;
-import org.example.Tiles.TileManager;
-import org.example.UI.UI;
+import org.example.Model.Entity.Entity;
+import org.example.View.EntityView.EntityView;
+import org.example.View.EntityView.PlayerView;
+import org.example.Model.Main.GameCFG;
+import org.example.Model.Object;
+import org.example.View.Tiles.TileManager;
+import org.example.View.UI.UI;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class GamePanel extends JPanel implements Runnable {
 
     private final int maxScreenCol=16;
     private final int maxScreenRow=12;
-    private int screenWight;
-    private int screenHeight;
 
 //    private ArrayList<ObjectView> objectsView = new ArrayList<>();
 //    private ArrayList<EntityView> npcsView = new ArrayList<>();
-
-
     private double maxFPS = 60;
 //    private AssetsSetterView assetsSetterView ;
     private TileManager tileManager;
     private GameCFG gameCFG = new GameCFG();
-    private UI ui =new UI(gameCFG);
+    private UI ui;
+    private PlayerView playerView = new PlayerView(this);
+    private EntityView entityView;
+    private ObjectView objectView;
+    private ArrayList<EntityView> entityViews = new ArrayList<>();
+    private ArrayList<ObjectView> objectViews = new ArrayList<>();
+//    private FightView fightView ;
+
     Thread gameThread;
     public GamePanel() throws IOException {
-//        assetsSetterView= new AssetsSetterView(this,gameCFG);
+        tileManager = new TileManager(this);
+        ui =new UI(this);
+//        fightView = new FightView(this,gameCFG.getPlayer().getFightModel());
         this.addKeyListener(gameCFG.getKeyboardController());
         this.setPreferredSize(new Dimension(gameCFG.getScreenWight(),gameCFG.getScreenHeight()));
         this.setBackground(Color.black);
@@ -39,8 +48,15 @@ public class GamePanel extends JPanel implements Runnable {
         gameThread.start();
     }
     public void setupGame() throws IOException {
-//        assetsSetterView.setObjectView();
-//        assetsSetterView.setNpcView();
+
+        for (Entity npc : gameCFG.getNpcs()) {
+            entityView = new EntityView(this,npc);
+            entityViews.add(entityView);
+        }
+        for (Object object: gameCFG.getObjects()) {
+            objectView = new ObjectView(this,object);
+            objectViews.add(objectView);
+        }
         gameCFG.setGameState(gameCFG.getAdventureState());
     }
     @Override
@@ -59,19 +75,30 @@ public class GamePanel extends JPanel implements Runnable {
             try {
                 double remainingTime = nextDrawTime - System.nanoTime();
                 remainingTime/=1000000;
+                if(remainingTime < 0) remainingTime=0;
                 Thread.sleep((long) remainingTime);
 
                 nextDrawTime += drawInterval;
-                if (remainingTime<0) remainingTime=0;
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
     }
     public void update() throws IOException {
+        gameCFG.update();
+        if (gameCFG.getGameState()==gameCFG.getLoad()){
+            entityViews.clear();
+            for (Entity npc : gameCFG.getNpcs()) {
+                entityView = new EntityView(this,npc);
+                entityViews.add(entityView);
+            }
+            getGameCFG().setGameState(getGameCFG().getAdventureState());
+        }
+
+
 //            getGameCFG().update();
 //            System.out.println(playerView.getX());
-            gameCFG.getPlayer().update();
+//            gameCFG.getPlayer().update();
 //            for (EntityView npc : npcsView) {
 //                npc.update();
 //            }
@@ -80,14 +107,22 @@ public class GamePanel extends JPanel implements Runnable {
 
         super.paintComponent(graphics);
         Graphics2D graphics2D = (Graphics2D) graphics;
-        gameCFG.getTileManager().draw(graphics2D);
-        for (Object obj : gameCFG.getObjects()) {
-                obj.getObjectView().draw(graphics2D,obj);
+        tileManager.draw(graphics2D);
+        if(gameCFG.getGameState()!=gameCFG.getFightState()) {
+            for (ObjectView obj : objectViews) {
+                obj.draw(graphics2D);
+            }
+//            System.out.println(entityViews.get(1));
+            for (EntityView npc : entityViews) {
+                try {
+                    npc.draw(graphics2D);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            playerView.draw(graphics2D);
         }
-        for (Entity npc : gameCFG.getNpcs()) {
-            npc.getEntityView().draw(graphics2D);
-        }
-        gameCFG.getPlayer().getPlayerView().draw(graphics2D);
+
         try {
             ui.draw(graphics2D);
         } catch (IOException e) {
@@ -95,13 +130,7 @@ public class GamePanel extends JPanel implements Runnable {
         }
         graphics2D.dispose();
     }
-    public int getScreenWight() {
-        return screenWight;
-    }
 
-    public int getScreenHeight() {
-        return screenHeight;
-    }
 
     public int getMaxScreenCol() {
         return maxScreenCol;
@@ -119,8 +148,29 @@ public class GamePanel extends JPanel implements Runnable {
         return gameCFG;
     }
 
+    public PlayerView getPlayerView() {
+        return playerView;
+    }
 
-//    public void setNpcs(EntityView npcs) {
+    public void setPlayerView(PlayerView playerView) {
+        this.playerView = playerView;
+    }
+
+    public ArrayList<EntityView> getEntityViews() {
+        return entityViews;
+    }
+    public EntityView getEntityView (String name){
+        for (EntityView npc : entityViews) {
+            if(npc.getName()==name){
+                return npc;
+            }
+        }
+        return null;
+    }
+    //    public FightView getFightView() {
+//        return fightView;
+//    }
+    //    public void setNpcs(EntityView npcs) {
 //        this.npcsView.add(npcs);
 //    }
 //

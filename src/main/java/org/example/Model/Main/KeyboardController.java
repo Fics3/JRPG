@@ -1,9 +1,11 @@
-package org.example;
+package org.example.Model.Main;
 
-import org.example.Main.GameCFG;
+import org.example.Model.Main.GameCFG;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+
+
 
 public class KeyboardController implements KeyListener {
     
@@ -11,6 +13,12 @@ public class KeyboardController implements KeyListener {
     private boolean upPressed,downPressed,leftPressed, rightPressed;
     private boolean dialogue = false;
     private GameCFG gameCFG;
+    private boolean fight=false;
+    private boolean slash=false;
+    private boolean vampireSlash=false;
+    private boolean magic=false;
+    private boolean items=false;
+    private boolean restoreHealth=false;
 
     public KeyboardController(GameCFG gameCFG){
         this.gameCFG=gameCFG;
@@ -41,11 +49,16 @@ public class KeyboardController implements KeyListener {
                 gameCFG.setGameState(gameCFG.getPauseState());
             }
             if(code == KeyEvent.VK_SPACE && gameCFG.getPlayer().isCollisionOn()){
-                System.out.println(1);
                 dialogue=true;
 //                gameCFG.setGameState(gameCFG.getDialogueState());
             }
+            if(code == KeyEvent.VK_I){
+                gameCFG.setGameState(gameCFG.getStatState());
+            }
         }
+            else if( gameCFG.getGameState() == gameCFG.getStatState() && code == KeyEvent.VK_I){
+                gameCFG.setGameState(gameCFG.getAdventureState());
+            }
             else if(gameCFG.getGameState() == gameCFG.getPauseState()) {
                 if (code == KeyEvent.VK_ESCAPE) {
                     gameCFG.setGameState(gameCFG.getAdventureState());
@@ -55,6 +68,32 @@ public class KeyboardController implements KeyListener {
                     gameCFG.setGameState(gameCFG.getAdventureState());
                     setDialogue(false);
             }
+            else if(gameCFG.getGameState()==gameCFG.getFightState()){
+                if(code == KeyEvent.VK_1 && !fight){
+                    setFight(true);
+                }
+                else if( code== KeyEvent.VK_2 && !magic){
+                    setMagic(true);
+                }
+                if(code == KeyEvent.VK_Q && magic){
+                    setRestoreHealth(true);
+                }
+                if(code == KeyEvent.VK_Q && fight){
+                    setSlash(true);
+//                setFight(false);
+                }
+                else if(code== KeyEvent.VK_W && fight){
+                    setVampireSlash(true);
+//                setFight(false);
+                }
+                if(code == KeyEvent.VK_ESCAPE){
+                    fight=false;
+                    magic=false;
+                    items=false;
+                }
+            }
+
+
     }
 
     @Override
@@ -108,5 +147,53 @@ public class KeyboardController implements KeyListener {
 
     public void setDialogue(boolean dialogue) {
         this.dialogue = dialogue;
+    }
+
+    public boolean isFight() {
+        return fight;
+    }
+
+    public void setFight(boolean fight) {
+        this.fight = fight;
+    }
+
+    public boolean isMagic() {
+        return magic;
+    }
+
+    public void setMagic(boolean magic) {
+        this.magic = magic;
+    }
+
+    public boolean isItems() {
+        return items;
+    }
+
+    public void setItems(boolean items) {
+        this.items = items;
+    }
+
+    public boolean isSlash() {
+        return slash;
+    }
+
+    public void setSlash(boolean slash) {
+        this.slash = slash;
+    }
+
+    public boolean isVampireSlash() {
+        return vampireSlash;
+    }
+
+    public void setVampireSlash(boolean vampireSlash) {
+        this.vampireSlash = vampireSlash;
+    }
+
+    public boolean isRestoreHealth() {
+        return restoreHealth;
+    }
+
+    public void setRestoreHealth(boolean restoreHealth) {
+        this.restoreHealth = restoreHealth;
     }
 }

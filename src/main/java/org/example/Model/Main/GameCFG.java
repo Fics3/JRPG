@@ -1,10 +1,9 @@
-package org.example.Main;
+package org.example.Model.Main;
 
-import org.example.KeyboardController;
-import org.example.Entity.Entity.Entity;
-import org.example.Entity.Entity.Player;
-import org.example.Objects.Object;
-import org.example.Tiles.TileManager;
+import org.example.Model.Entity.Entity;
+import org.example.Model.Entity.Player;
+import org.example.Model.FightModel;
+import org.example.Model.Object;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,6 +17,8 @@ public class GameCFG {
     private final int pauseState = 2;
     private final int dialogueState = 3;
     private final int fightState = 4;
+    private final int statState = 5;
+    private final int load = 6;
     private AssetsSetter assetsSetter = new AssetsSetter(this);
     private final int maxWorldCol=50;
     private final int maxWorldRow=50;
@@ -33,9 +34,9 @@ public class GameCFG {
     private ArrayList<Object> objects = new ArrayList<>();
     private ArrayList<Entity> npcs = new ArrayList<>();
     private ArrayList<Entity> enemies = new ArrayList<>();
-    TileManager tileManager = new TileManager(this);
     KeyboardController keyboardController = new KeyboardController(this);
     Player player = new Player(this, keyboardController);
+    FightModel fightModel;
 
 
     private String tmp="RAP";
@@ -44,28 +45,36 @@ public class GameCFG {
         collisionChecker = new CollisionChecker(this, player);
         assetsSetter.setObject();
         assetsSetter.setNpc();
+        assetsSetter.setEnemy();
         setGameState(getAdventureState());
     }
 
     public void setupGame() throws IOException {
         setGameState(getAdventureState());
     }
-        public void update() throws IOException {
+        public void update(){
             if(getGameState() == getAdventureState()) {
                 player.update();
                 for (Entity npc : npcs) {
-//                    npc.update();
+                    npc.update();
                 }
             }
             else if (getGameState() == getPauseState()){
             }
-            else if (getGameState() ==getFightState()){
+            else if (getGameState() == getFightState()){
             }
             else if(getGameState() == getDialogueState()){
             }
+            else if(getGameState() == getLoad()){
+            }
+            else if(getGameState() == getStatState()){
+
+            }
         }
 
-
+    public void setEnemy(Entity entity){
+        this.enemies.add(entity);
+    }
     public int getGameState() {
         return gameState;
     }
@@ -198,8 +207,15 @@ public class GameCFG {
     public void setScreenHeight(int screenHeight) {
         this.screenHeight = screenHeight;
     }
+    public void deleteNpc(Entity entity){
+        npcs.remove(entity);
+    }
 
-    public TileManager getTileManager() {
-        return tileManager;
+    public int getLoad() {
+        return load;
+    }
+
+    public int getStatState() {
+        return statState;
     }
 }
