@@ -1,14 +1,13 @@
 package org.example.View.EntityView;
 
+import org.example.IO.InOut;
 import org.example.Model.Entity.Entity;
 
 import org.example.View.GamePanel;
 import org.example.View.UtilityTools;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.Objects;
 
 public class EntityView {
@@ -24,14 +23,14 @@ public class EntityView {
 //        getImages(name);
 //        setup(name);
     }
-    public EntityView(GamePanel gamePanel, Entity entity) throws IOException {
+    public EntityView(GamePanel gamePanel, Entity entity) {
         this.gamePanel=gamePanel;
         this.entity=entity;
         getImages(entity.getName());
         setName(entity.getName());
     }
 
-    public void draw(Graphics2D graphics2D) throws IOException {
+    public void draw(Graphics2D graphics2D)  {
         BufferedImage image = null;
         if (entity.getX() + gamePanel.getGameCFG().getTileSize() > gamePanel.getGameCFG().getPlayer().getX() -gamePanel.getPlayerView().getScreenX() &&
                 entity.getY() - gamePanel.getGameCFG().getTileSize() < gamePanel.getGameCFG().getPlayer().getY() +gamePanel.getPlayerView().getScreenY() &&
@@ -67,13 +66,12 @@ public class EntityView {
 
 
     }
-    public BufferedImage setup(String imageName) throws IOException {
+    public BufferedImage setup(String imageName){
         UtilityTools utilityTools = new UtilityTools();
-        BufferedImage image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/NPC/"+imageName+".png")));
-        return utilityTools.scaleImage(image,gamePanel.getGameCFG().getTileSize(),gamePanel.getGameCFG().getTileSize());
+        InOut inOut = new InOut();
+        return utilityTools.scaleImage(inOut.setup(imageName),gamePanel.getGameCFG().getTileSize(),gamePanel.getGameCFG().getTileSize());
     }
-    public void getImages(String name) throws IOException {
-        try {
+    public void getImages(String name) {
             this.setDown1(setup(name+"_FWalk1"));
             this.setDownStay(setup(name+"_FWalkStay"));
             this.setDown2(setup(name+"_FWalk2"));
@@ -87,10 +85,6 @@ public class EntityView {
             this.setRightStay(setup(name+"_RWalkStay"));
             this.setRight2(setup(name+"_RWalk2"));
 
-        }
-        catch (IOException e){
-            e.printStackTrace();
-        }
     }
 
     public int getSpriteNum() {

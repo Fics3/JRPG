@@ -4,7 +4,7 @@ import org.example.Model.Entity.Entity;
 import org.example.View.EntityView.EntityView;
 import org.example.View.EntityView.PlayerView;
 import org.example.Model.Main.GameCFG;
-import org.example.Model.Object;
+import org.example.Model.Object.Object;
 import org.example.View.Tiles.TileManager;
 import org.example.View.UI.UI;
 
@@ -17,11 +17,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     private final int maxScreenCol=16;
     private final int maxScreenRow=12;
-
-//    private ArrayList<ObjectView> objectsView = new ArrayList<>();
-//    private ArrayList<EntityView> npcsView = new ArrayList<>();
     private double maxFPS = 60;
-//    private AssetsSetterView assetsSetterView ;
     private TileManager tileManager;
     private GameCFG gameCFG = new GameCFG();
     private UI ui;
@@ -30,13 +26,10 @@ public class GamePanel extends JPanel implements Runnable {
     private ObjectView objectView;
     private ArrayList<EntityView> entityViews = new ArrayList<>();
     private ArrayList<ObjectView> objectViews = new ArrayList<>();
-//    private FightView fightView ;
-
     Thread gameThread;
-    public GamePanel() throws IOException {
+    public GamePanel(){
         tileManager = new TileManager(this);
         ui =new UI(this);
-//        fightView = new FightView(this,gameCFG.getPlayer().getFightModel());
         this.addKeyListener(gameCFG.getKeyboardController());
         this.setPreferredSize(new Dimension(gameCFG.getScreenWight(),gameCFG.getScreenHeight()));
         this.setBackground(Color.black);
@@ -64,12 +57,7 @@ public class GamePanel extends JPanel implements Runnable {
         double drawInterval = 1000000000 /maxFPS;
         double nextDrawTime = System.nanoTime()+drawInterval;
         while (gameThread!=null) {
-            try {
                 update();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
             repaint();
 
             try {
@@ -84,25 +72,35 @@ public class GamePanel extends JPanel implements Runnable {
             }
         }
     }
-    public void update() throws IOException {
+    public void update() {
         gameCFG.update();
-        if (gameCFG.getGameState()==gameCFG.getLoad()){
+        if (gameCFG.getGameState()==gameCFG.getLoadEntity()) {
             entityViews.clear();
             for (Entity npc : gameCFG.getNpcs()) {
-                entityView = new EntityView(this,npc);
+                entityView = new EntityView(this, npc);
                 entityViews.add(entityView);
             }
             getGameCFG().setGameState(getGameCFG().getAdventureState());
         }
-
-
-//            getGameCFG().update();
-//            System.out.println(playerView.getX());
-//            gameCFG.getPlayer().update();
-//            for (EntityView npc : npcsView) {
-//                npc.update();
-//            }
+        if( gameCFG.getGameState() == gameCFG.getLoadObjects()) {
+            objectViews.clear();
+            for (Object obj : gameCFG.getObjects()) {
+                objectView = new ObjectView(this, obj);
+                objectViews.add(objectView);
+            }
+            getGameCFG().setGameState(getGameCFG().getAdventureState());
+        }
+        if( gameCFG.getGameState() == gameCFG.getLoadInventory()) {
+            playerView.getInventory().clear();
+            for (Object object : gameCFG.getPlayer().getInventory()) {
+                objectView = new ObjectView(this, object);
+                playerView.getInventory().add(objectView);
+            }
+            getGameCFG().setGameState(getGameCFG().getStatState());
+        }
     }
+
+
     public void paintComponent(Graphics graphics){
 
         super.paintComponent(graphics);
@@ -114,20 +112,14 @@ public class GamePanel extends JPanel implements Runnable {
             }
 //            System.out.println(entityViews.get(1));
             for (EntityView npc : entityViews) {
-                try {
-                    npc.draw(graphics2D);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                npc.draw(graphics2D);
             }
             playerView.draw(graphics2D);
         }
+        if(gameCFG.getGameState()==gameCFG.getStatState()){
 
-        try {
-            ui.draw(graphics2D);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
+            ui.draw(graphics2D);
         graphics2D.dispose();
     }
 

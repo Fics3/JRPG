@@ -24,7 +24,7 @@ public class FightModel{
         }
         player.getGameCFG().deleteNpc(entity);
         player.lvlUp(10);
-        player.getGameCFG().setGameState(player.getGameCFG().getLoad());
+        player.getGameCFG().setGameState(player.getGameCFG().getLoadEntity());
     }
 
     public void playerMove(Player player,Entity entity){

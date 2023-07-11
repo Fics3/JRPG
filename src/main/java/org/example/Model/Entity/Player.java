@@ -3,6 +3,8 @@ package org.example.Model.Entity;
 import org.example.Model.FightModel;
 import org.example.Model.Main.GameCFG;
 import org.example.Model.Main.KeyboardController;
+import org.example.Model.Object.OBJ_woodSword;
+import org.example.Model.Object.Object;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -13,24 +15,27 @@ public class Player extends Entity {
     FightModel fightModel = new FightModel();
     private int exp = 0;
     private int maxExp = 10;
-    private ArrayList<Integer> inventory = new ArrayList<>(5);
+    private ArrayList<Object> inventory = new ArrayList<>();
+    private int inventorySize = 20;
+    private int inventoryCapacity = 0;
+    private int inventorySlot = 0;
+    private Object currentWeapon;
+    private Object currentHelmet;
+    private Object currentChest;
+    private Object currentBoots;
 
     public Player(GameCFG gameCFG, KeyboardController keyboardController)  {
         super(gameCFG);
-
+        for ( int i = 0; i<inventorySize ; i++) {
+            inventory.add(0,new Object(gameCFG));
+        }
         this.keyboardController = keyboardController;
-
         setSolidDefaultX(getSolidArea().x);
         setSolidDefaultY(getSolidArea().y);
+
         setName("Player");
-
-
+        setCurrentWeapon(new OBJ_woodSword(gameCFG));
         setSolidArea(new Rectangle(8, 16, (int) (getGameCFG().getTileSize() / 1.5), (int) (getGameCFG().getTileSize() / 1.5)));
-//        try {
-//            playerView = new PlayerView(gameCFG);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
         setDafautl();
     }
 
@@ -41,7 +46,7 @@ public class Player extends Entity {
         setSpeed(4);
         setMaxHP(50);
         setHP(getMaxHP());
-        setDamage(5*getLvl());
+        setDamage(getLvl() + currentWeapon.getDamage());
         setMaxMana(20);
         setMana(getMaxMana());
         setDirection("down");
@@ -63,7 +68,14 @@ public class Player extends Entity {
             }
             setCollisionOn(false);
             getGameCFG().getCollisionChecker().checkTile(this);
-            getGameCFG().getCollisionChecker().checkObject(this, true);
+            Integer objId = getGameCFG().getCollisionChecker().checkObject(this, true);
+//            System.out.println(getGameCFG().getObjects().size());
+            if(objId != null && inventoryCapacity<inventorySize) {
+                addItem(getGameCFG().getObjectWithId(objId));
+                getGameCFG().getObjects().remove(getGameCFG().getObjectWithId(objId));
+                getGameCFG().setGameState(getGameCFG().getLoadObjects());
+
+            }
             int idNpc = getGameCFG().getCollisionChecker().checkEntity(this, getGameCFG().getNpcs());
             if (idNpc != 0 && getKeyboardController().isDialogue() && !getGameCFG().getNpc(idNpc).isEnemy()) {
                 interactNPC();
@@ -75,13 +87,7 @@ public class Player extends Entity {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-//                getGameCFG().deleteNpc(idNpc);
-//                FightModel fightModel = new FightModel(this,getGameCFG().getNpc(idNpc));
             }
-//            int idEnemy = getGameCFG().getCollisionChecker().checkEntity(this,getGameCFG().getEnemies());
-//            if(idEnemy != 0){
-//                interactEnemy();
-//            }
             if (isCollisionOn()) {
                 switch (getDirection()) {
                     case "up":
@@ -188,12 +194,75 @@ public class Player extends Entity {
         this.maxExp = maxExp;
     }
 
-    public ArrayList<Integer> getInventory() {
+    public ArrayList<Object> getInventory() {
         return inventory;
     }
 
-    public void setInventory(ArrayList<Integer> inventory) {
+    public void setInventory(ArrayList<Object> inventory) {
         this.inventory = inventory;
+    }
+    public void addItem(Object object){
+        this.inventory.set(inventoryCapacity,object);
+        inventoryCapacity++;
+    }
+
+    public int getInventorySlot() {
+        return inventorySlot;
+    }
+
+    public void setInventorySlot(int inventorySlot) {
+        this.inventorySlot = inventorySlot;
+    }
+
+    public int getInventorySize() {
+        return inventorySize;
+    }
+
+    public void setInventorySize(int inventorySize) {
+        this.inventorySize = inventorySize;
+    }
+
+    public Object getCurrentWeapon() {
+        return currentWeapon;
+    }
+
+    public void setCurrentWeapon(Object currentWeapon) {
+        this.currentWeapon = currentWeapon;
+    }
+
+    public Object getCurrentHelmet() {
+        return currentHelmet;
+    }
+
+    public void setCurrentHelmet(Object currentHelmet) {
+        this.currentHelmet = currentHelmet;
+    }
+
+    public Object getCurrentChest() {
+        return currentChest;
+    }
+
+    public void setCurrentChest(Object currentChest) {
+        this.currentChest = currentChest;
+    }
+
+    public Object getCurrentBoots() {
+        return currentBoots;
+    }
+
+    public void setCurrentBoots(Object currentBoots) {
+        this.currentBoots = currentBoots;
+    }
+    public void addItemOnPlace(int id, Object object){
+        inventory.add(id , object);
+    }
+
+    public void setInventoryCapacity(int inventoryCapacity) {
+        this.inventoryCapacity = inventoryCapacity;
+    }
+
+    public int getInventoryCapacity() {
+        return inventoryCapacity;
     }
 }
 

@@ -1,10 +1,8 @@
-package org.example.Model;
+package org.example.Model.Object;
 
 import org.example.Model.Main.GameCFG;
-import org.example.View.ObjectView;
 
 import java.awt.Rectangle;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class Object {
@@ -12,22 +10,32 @@ public class Object {
     private int X,Y;
     private boolean collision;
     private String name;
-    GameCFG gameCFG;
+    private GameCFG gameCFG;
     private Rectangle solidArea=new Rectangle(0,0,24,16);
     private  int solidAreaDefaultX, solidAreaDefaultY;
     private ArrayList<Integer> possibleObjects = new ArrayList<>();
+    private String description;
+    private boolean equipable = false;
+    private boolean consumable = false;
+    private boolean weapon = false;
+    private boolean helmet = false;
+    private boolean chestplate = false;
+    private boolean boots = false;
 
-
-
-    public Object(GameCFG gameCFG, int id) throws IOException {
+    public Object(GameCFG gameCFG) {
         this.gameCFG = gameCFG;
-        setCollision(true);
-        if(id == 2) {
-            setName("chest");
-        }
+    }
+    public void consume(){
+        return;
+    }
+    public int getGainHP(){
+        return 0;
     }
     public int getId() {
         return id;
+    }
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getX() {
@@ -103,4 +111,67 @@ public class Object {
         this.name = name;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public boolean isEquipable() {
+        return equipable;
+    }
+
+    public void setEquipable(boolean equipable) {
+        this.equipable = equipable;
+    }
+
+    public boolean isConsumable() {
+        return consumable;
+    }
+
+    public void setConsumable(boolean consumable) {
+        this.consumable = consumable;
+    }
+
+    public boolean isWeapon() {
+        return weapon;
+    }
+
+    public void setWeapon(boolean weapon) {
+        this.weapon = weapon;
+    }
+
+    public boolean isHelmet() {
+        return helmet;
+    }
+
+    public void setHelmet(boolean helmet) {
+        this.helmet = helmet;
+    }
+
+    public boolean isChestplate() {
+        return chestplate;
+    }
+
+    public void setChestplate(boolean chestplate) {
+        this.chestplate = chestplate;
+    }
+
+    public boolean isBoots() {
+        return boots;
+    }
+
+    public void setBoots(boolean boots) {
+        this.boots = boots;
+    }
+
+    public int getDamage() {
+        return 0;
+    }
+
+    public GameCFG getGameCFG() {
+        return gameCFG;
+    }
 }

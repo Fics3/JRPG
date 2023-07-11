@@ -1,14 +1,14 @@
 package org.example.View.EntityView;
 
 
+import org.example.IO.InOut;
 import org.example.View.GamePanel;
+import org.example.View.ObjectView;
 import org.example.View.UtilityTools;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.Objects;
+import java.util.ArrayList;
 
 public class PlayerView extends EntityView {
 
@@ -19,16 +19,17 @@ public class PlayerView extends EntityView {
     private int spriteNum=2;
     private int spriteCycle = 0;
     private int fightComNum = 0;
+    private ArrayList<ObjectView> inventory = new ArrayList<>();
 
     private BufferedImage upStay, up1, up2,downStay, down1,down2,leftStay,left1,left2,rightStay,right1,right2;
-    public PlayerView(GamePanel gamePanel) throws IOException {
+    public PlayerView(GamePanel gamePanel)  {
         super(gamePanel);
         screenX=gamePanel.getGameCFG().getScreenWight()/2-(gamePanel.getGameCFG().getTileSize()/2);
         screenY=gamePanel.getGameCFG().getScreenHeight()/2-(gamePanel.getGameCFG().getTileSize()/2);
         getPlayerImage();
     }
 
-    public void getPlayerImage() throws IOException {
+    public void getPlayerImage()  {
             this.setDown1(setupPlayer("FWalk1"));
             this.setDownStay(setupPlayer("FStay"));
             this.setDown2(setupPlayer("FWalk2"));
@@ -44,10 +45,10 @@ public class PlayerView extends EntityView {
 
 
     }
-    public BufferedImage setupPlayer(String imageName) throws IOException {
+    public BufferedImage setupPlayer(String imageName)  {
         UtilityTools utilityTools = new UtilityTools();
-        BufferedImage image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Player/"+imageName+".png")));
-        return utilityTools.scaleImage(image, getGamePanel().getGameCFG().getTileSize(),getGamePanel().getGameCFG().getTileSize());
+        InOut inOut = new InOut();
+        return utilityTools.scaleImage(inOut.setupPlayer(imageName), getGamePanel().getGameCFG().getTileSize(),getGamePanel().getGameCFG().getTileSize());
     }
     public void draw(Graphics2D graphics2D){
 
@@ -188,6 +189,10 @@ public class PlayerView extends EntityView {
 
     public BufferedImage getRightStay() {
         return rightStay;
+    }
+
+    public ArrayList<ObjectView> getInventory() {
+        return inventory;
     }
 
     public void setRightStay(BufferedImage rightStay) {

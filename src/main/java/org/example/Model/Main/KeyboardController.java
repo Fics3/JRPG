@@ -1,6 +1,5 @@
 package org.example.Model.Main;
 
-import org.example.Model.Main.GameCFG;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -8,7 +7,6 @@ import java.awt.event.KeyListener;
 
 
 public class KeyboardController implements KeyListener {
-    
 
     private boolean upPressed,downPressed,leftPressed, rightPressed;
     private boolean dialogue = false;
@@ -19,7 +17,7 @@ public class KeyboardController implements KeyListener {
     private boolean magic=false;
     private boolean items=false;
     private boolean restoreHealth=false;
-
+    private boolean use = false;
     public KeyboardController(GameCFG gameCFG){
         this.gameCFG=gameCFG;
     }
@@ -53,11 +51,32 @@ public class KeyboardController implements KeyListener {
 //                gameCFG.setGameState(gameCFG.getDialogueState());
             }
             if(code == KeyEvent.VK_I){
-                gameCFG.setGameState(gameCFG.getStatState());
+                gameCFG.setGameState(gameCFG.getLoadInventory());
             }
         }
-            else if( gameCFG.getGameState() == gameCFG.getStatState() && code == KeyEvent.VK_I){
-                gameCFG.setGameState(gameCFG.getAdventureState());
+            else if( gameCFG.getGameState() == gameCFG.getStatState()){
+                if(code == KeyEvent.VK_I) {
+                    gameCFG.setGameState(gameCFG.getAdventureState());
+                }
+                if(code == KeyEvent.VK_D){
+                    if(gameCFG.getPlayer().getInventorySlot()<gameCFG.getPlayer().getInventorySize()-1) {
+                        gameCFG.getPlayer().setInventorySlot(gameCFG.getPlayer().getInventorySlot() + 1);
+                    }
+                    else{
+                        gameCFG.getPlayer().setInventorySlot(0);
+                    }
+                }
+                if(code == KeyEvent.VK_A){
+                    if(gameCFG.getPlayer().getInventorySlot()<=0) {
+                        gameCFG.getPlayer().setInventorySlot(gameCFG.getPlayer().getInventorySize() - 2);
+                    }
+                    else {
+                        gameCFG.getPlayer().setInventorySlot(gameCFG.getPlayer().getInventorySlot() - 1);
+                    }
+                }
+                if(code == KeyEvent.VK_SPACE){
+                    use = true;
+                }
             }
             else if(gameCFG.getGameState() == gameCFG.getPauseState()) {
                 if (code == KeyEvent.VK_ESCAPE) {
@@ -195,5 +214,13 @@ public class KeyboardController implements KeyListener {
 
     public void setRestoreHealth(boolean restoreHealth) {
         this.restoreHealth = restoreHealth;
+    }
+
+    public boolean isUse() {
+        return use;
+    }
+
+    public void setUse(boolean use) {
+        this.use = use;
     }
 }

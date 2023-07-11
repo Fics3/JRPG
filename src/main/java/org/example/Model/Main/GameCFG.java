@@ -3,9 +3,8 @@ package org.example.Model.Main;
 import org.example.Model.Entity.Entity;
 import org.example.Model.Entity.Player;
 import org.example.Model.FightModel;
-import org.example.Model.Object;
+import org.example.Model.Object.Object;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class GameCFG {
@@ -18,7 +17,9 @@ public class GameCFG {
     private final int dialogueState = 3;
     private final int fightState = 4;
     private final int statState = 5;
-    private final int load = 6;
+    private final int loadEntity = 6;
+    private final int loadObjects = 7;
+    private final int loadInventory = 8;
     private AssetsSetter assetsSetter = new AssetsSetter(this);
     private final int maxWorldCol=50;
     private final int maxWorldRow=50;
@@ -34,14 +35,14 @@ public class GameCFG {
     private ArrayList<Object> objects = new ArrayList<>();
     private ArrayList<Entity> npcs = new ArrayList<>();
     private ArrayList<Entity> enemies = new ArrayList<>();
-    KeyboardController keyboardController = new KeyboardController(this);
-    Player player = new Player(this, keyboardController);
-    FightModel fightModel;
+    private KeyboardController keyboardController = new KeyboardController(this);
+    private Player player = new Player(this, keyboardController);
+    private FightModel fightModel;
 
 
     private String tmp="RAP";
 
-    public GameCFG () throws IOException {
+    public GameCFG (){
         collisionChecker = new CollisionChecker(this, player);
         assetsSetter.setObject();
         assetsSetter.setNpc();
@@ -49,7 +50,7 @@ public class GameCFG {
         setGameState(getAdventureState());
     }
 
-    public void setupGame() throws IOException {
+    public void setupGame() {
         setGameState(getAdventureState());
     }
         public void update(){
@@ -65,13 +66,111 @@ public class GameCFG {
             }
             else if(getGameState() == getDialogueState()){
             }
-            else if(getGameState() == getLoad()){
-            }
             else if(getGameState() == getStatState()){
-
+                if(player.getInventory().get(player.getInventorySlot()).getName()!=null) {
+                    Object curObject = player.getInventory().get(player.getInventorySlot());
+                    if(keyboardController.isUse()){
+                        if(curObject.isConsumable()){
+                            curObject.consume();
+                            player.getInventory().remove(curObject);
+                            setGameState(loadObjects);
+                        }
+                        if(curObject.isWeapon()){
+                            equipWeapon(curObject);
+                        }
+                        if(curObject.isHelmet()){
+                            equipHelmet(curObject);
+                        }
+                        if(curObject.isChestplate()){
+                            equipChest(curObject);
+                        }
+                        if(curObject.isBoots()){
+                            equipBoots(curObject);
+                        }
+                        keyboardController.setUse(false);
+                    }
+                }
             }
         }
-
+    public Object getObjectWithId(int id ){
+        for (Object object : objects) {
+            if(object.getId()==id){
+                return object;
+            }
+        }
+        return null;
+    }
+    public void equipHelmet(Object curObject){
+        if (player.getCurrentHelmet() != null) {
+            player.setMaxHP(player.getMaxHP()-player.getCurrentHelmet().getGainHP());
+            player.addItemOnPlace(player.getInventorySlot(), player.getCurrentHelmet());
+            player.getInventory().remove(curObject);
+            player.setCurrentHelmet(curObject);
+            setGameState(loadInventory);
+            player.setMaxHP(getPlayer().getMaxHP() + player.getCurrentHelmet().getGainHP());
+        }
+        else{
+            player.getInventory().remove(curObject);
+            player.setCurrentHelmet(curObject);
+            player.getInventory().add(new Object(this));
+            player.setInventoryCapacity(player.getInventoryCapacity()-1);
+            setGameState(loadInventory);
+            player.setMaxHP(getPlayer().getMaxHP() + player.getCurrentHelmet().getGainHP());
+        }
+    }
+    public void equipChest(Object curObject){
+        if (player.getCurrentChest() != null) {
+            player.setMaxHP(player.getMaxHP()-player.getCurrentChest().getGainHP());
+            player.addItemOnPlace(player.getInventorySlot(), player.getCurrentChest());
+            player.getInventory().remove(curObject);
+            player.setCurrentChest(curObject);
+            setGameState(loadInventory);
+            player.setMaxHP(getPlayer().getMaxHP() + player.getCurrentChest().getGainHP());
+        }
+        else{
+            player.getInventory().remove(curObject);
+            player.setCurrentChest(curObject);
+            player.getInventory().add(new Object(this));
+            player.setInventoryCapacity(player.getInventoryCapacity()-1);
+            setGameState(loadInventory);
+            player.setMaxHP( getPlayer().getMaxHP() + player.getCurrentChest().getGainHP());
+        }
+    }
+    public void equipBoots(Object curObject){
+        if (player.getCurrentBoots() != null) {
+            player.setMaxHP(player.getMaxHP()-player.getCurrentBoots().getGainHP());
+            player.addItemOnPlace(player.getInventorySlot(), player.getCurrentBoots());
+            player.getInventory().remove(curObject);
+            player.setCurrentBoots(curObject);
+            setGameState(loadInventory);
+            player.setMaxHP( getPlayer().getMaxHP() + player.getCurrentBoots().getGainHP());
+        }
+        else{
+            player.getInventory().remove(curObject);
+            player.setCurrentBoots(curObject);
+            player.getInventory().add( new Object(this));
+            player.setInventoryCapacity(player.getInventoryCapacity()-1);
+            setGameState(loadInventory);
+            player.setMaxHP(getPlayer().getMaxHP() + player.getCurrentBoots().getGainHP());
+        }
+    }
+    public void equipWeapon(Object curObject){
+        if(player.getCurrentWeapon()!=null) {
+            player.addItemOnPlace(player.getInventorySlot(), player.getCurrentWeapon());
+            player.getInventory().remove(curObject);
+            player.setCurrentWeapon(curObject);
+            setGameState(loadInventory);
+            player.setDamage(getPlayer().getLvl() + player.getCurrentWeapon().getDamage());
+        }
+        else {
+            player.getInventory().remove(curObject);
+            player.setCurrentWeapon(curObject);
+            player.getInventory().add(new Object(this));
+            player.setInventoryCapacity(player.getInventoryCapacity()-1);
+            setGameState(loadInventory);
+            player.setDamage(getPlayer().getLvl() + player.getCurrentWeapon().getDamage());
+        }
+    }
     public void setEnemy(Entity entity){
         this.enemies.add(entity);
     }
@@ -210,12 +309,22 @@ public class GameCFG {
     public void deleteNpc(Entity entity){
         npcs.remove(entity);
     }
-
-    public int getLoad() {
-        return load;
-    }
-
     public int getStatState() {
         return statState;
+    }
+    public void setObject(int id){
+        objects.set(id,null);
+    }
+
+    public int getLoadObjects() {
+        return loadObjects;
+    }
+
+    public int getLoadInventory() {
+        return loadInventory;
+    }
+
+    public int getLoadEntity() {
+        return loadEntity;
     }
 }

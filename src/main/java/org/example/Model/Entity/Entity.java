@@ -1,9 +1,9 @@
 package org.example.Model.Entity;
 
 import org.example.Model.Main.GameCFG;
+import org.example.Model.PathFinder;
 
 import java.awt.Rectangle;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
@@ -23,7 +23,7 @@ public class Entity {
     private GameCFG gameCFG;
     private int id;
     private ArrayList<String> dialogues = new ArrayList<>();
-    private boolean isEnemy;
+    private boolean isEnemy = false;
     private String currentDialogue;
     private int damage;
     private int mana;
@@ -31,31 +31,19 @@ public class Entity {
     private int spriteNum=2;
     private int spriteCycle = 0;
     private int actionLockCounter = 0;
-
+    private PathFinder pathFinder;
 
 
     public Entity(GameCFG gameCFG){
         this.gameCFG = gameCFG;
     }
-    public  Entity(GameCFG gameCFG,boolean isEnemy,String name,int x,int y,int id) throws IOException {
+    public  Entity(GameCFG gameCFG,int x,int y,int id) {
         this.gameCFG = gameCFG;
-        setName(name);
-        setEnemy(isEnemy);
-        if(Objects.equals(name, "GreenBoy")){
-            setMaxHP(50);
-            setLvl(1);
-            setHP(maxHP*lvl);
-            setDirection("down");
-            setSpeed(1);
+        pathFinder= new PathFinder(gameCFG);
+//        if(Objects.equals(name, "GreenBoy")){
             setX(x);
             setY(y);
-            setMaxMana(20);
-            setMana(maxMana*lvl);
-            setId(id);
-            setName(name);
-            setDamage(4*lvl);
-            setDialogue("Sample Text");
-        }
+//        }
     }
 
     public void setAction(){
@@ -79,6 +67,10 @@ public class Entity {
         }
 
     }
+    public void checkCollision(){
+        gameCFG.getCollisionChecker().checkTile(this);
+        gameCFG.getCollisionChecker().checkObject(this,false);
+    }
 
     public void setDialogue(String txt){
         dialogues.add(txt);
@@ -88,9 +80,9 @@ public class Entity {
 //        setDamage(damage*lvl);
 //        setMaxHP(maxHP+5*lvl);
 //        setAction();
+        setAction();
         setCollisionOn(false);
-        gameCFG.getCollisionChecker().checkTile(this);
-        gameCFG.getCollisionChecker().checkObject(this,false);
+        checkCollision();
         if(isEnemy) runToPlayer();
         if(isCollisionOn()){
             switch (getDirection()){
@@ -100,14 +92,14 @@ public class Entity {
                 case "left":setX(getX()+getSpeed()); break;
             }
         }
-//        if(!isCollisionOn()){
-//            switch (getDirection()){
-//                case "up":setY(getY()-getSpeed()); break;
-//                case "down":setY(getY()+getSpeed()); break;
-//                case "right":setX(getX()+getSpeed()); break;
-//                case "left":setX(getX()-getSpeed()); break;
-//            }
-//        }
+        if(!isCollisionOn()){
+            switch (getDirection()){
+                case "up":setY(getY()-getSpeed()); break;
+                case "down":setY(getY()+getSpeed()); break;
+                case "right":setX(getX()+getSpeed()); break;
+                case "left":setX(getX()-getSpeed()); break;
+            }
+        }
         spriteCycle++;
         if (spriteCycle > 15) {
             if (getSpriteNum() == 1) setSpriteNum(2);
@@ -121,49 +113,113 @@ public class Entity {
         if (Math.abs(this.getX() - getGameCFG().getPlayer().getX())-gameCFG.getTileSize() < getGameCFG().getScreenWight() / 2 &&
                 Math.abs(this.getY() - getGameCFG().getPlayer().getY())-gameCFG.getTileSize() < getGameCFG().getScreenHeight() / 2) {
 //            this.setX(getX()-getSpeed());
-            int pX=getGameCFG().getPlayer().getX()-this.getX();
-            int pY = getGameCFG().getPlayer().getY()-this.getY();
-            if(pX>0 && pY>0){
-                setDirection("down");
-                this.setX(getX()+getSpeed());
-                this.setY(getY()+getSpeed());
-            }
-            if(pX>0 && pY<0){
-                setDirection("right");
-                this.setX(getX()+getSpeed());
-                this.setY(getY()-getSpeed());
-            }
-            if(pX<0 && pY<0){
-                setDirection("left");
-                this.setX(getX()-getSpeed());
-                this.setY(getY()-getSpeed());
-            }
-            if(pX<0 && pY>0){
-                setDirection("left");
-                this.setX(getX()-getSpeed());
-                this.setY(getY()+getSpeed());
-            }
-            if(pX < 0 && pY == 0){
-                setDirection("left");
-                this.setX(getX()-getSpeed());
-            }
-            if(pX>0 && pY == 0){
-                setDirection("right");
-                this.setX(getX()+getSpeed());
-            }
-            if(pX==0 && pY<0){
-                setDirection("up");
-                this.setY(getY()-getSpeed());
-            }
-            if(pX==0 && pY>0){
-                setDirection("down");
-                this.setY(getY()+getSpeed());
-            }
+            int pX= (gameCFG.getPlayer().getX() + gameCFG.getPlayer().getSolidArea().x)/gameCFG.getTileSize();
+            int pY =(gameCFG.getPlayer().getY() + gameCFG.getPlayer().getSolidArea().y)/gameCFG.getTileSize();
+
+            searchPath(pX,pY);
+
+//            int tileDistance = (pX + pY)/gameCFG.getTileSize();
+
+//            if(pX>0 && pY>0){
+//                setDirection("down");
+//                this.setX(getX()+getSpeed());
+//                this.setY(getY()+getSpeed());
+//            }
+//            if(pX>0 && pY<0){
+//                setDirection("right");
+//                this.setX(getX()+getSpeed());
+//                this.setY(getY()-getSpeed());
+//            }
+//            if(pX<0 && pY<0){
+//                setDirection("left");
+//                this.setX(getX()-getSpeed());
+//                this.setY(getY()-getSpeed());
+//            }
+//            if(pX<0 && pY>0){
+//                setDirection("left");
+//                this.setX(getX()-getSpeed());
+//                this.setY(getY()+getSpeed());
+//            }
+//            if(pX < 0 && pY == 0){
+//                setDirection("left");
+//                this.setX(getX()-getSpeed());
+//            }
+//            if(pX>0 && pY == 0){
+//                setDirection("right");
+//                this.setX(getX()+getSpeed());
+//            }
+//            if(pX==0 && pY<0){
+//                setDirection("up");
+//                this.setY(getY()-getSpeed());
+//            }
+//            if(pX==0 && pY>0){
+//                setDirection("down");
+//                this.setY(getY()+getSpeed());
+//            }
 //            this.setY(getY() + getSpeed());
         }
 
         }
 
+    public void searchPath(int goalCol, int goalRow){
+        int startCol = (x + solidArea.x)/gameCFG.getTileSize();
+        int startRow = (y + solidArea.y)/gameCFG.getTileSize();
+
+        pathFinder.setNode(startCol,startRow,goalCol,goalRow);
+
+        if(pathFinder.search()){
+            int nextX = pathFinder.getPathList().get(0).getCol()*gameCFG.getTileSize();
+            int nextY = pathFinder.getPathList().get(0).getRow()*gameCFG.getTileSize();
+
+            int enLeftX = x + solidArea.x;
+            int enRightX = x+solidArea.x +solidArea.width;
+            int enTopY = y+solidArea.y;
+            int enBotY = y+solidArea.y+solidArea.height;
+
+            if(enTopY>nextY && enLeftX >= nextX && enRightX < nextX +gameCFG.getTileSize()){
+                direction = "up";
+            }
+            else if(enTopY<nextY && enLeftX >= nextX && enRightX < nextX +gameCFG.getTileSize()){
+                direction = "down";
+            }
+            else if(enTopY >= nextY && enBotY < nextY + gameCFG.getTileSize()){
+                if(enLeftX>nextX) {
+                    direction = "left";
+                }
+                if(enLeftX < nextX){
+                    direction="right";
+                }
+            }
+            else if(enTopY>nextY && enLeftX>nextX){
+                direction = "up";
+                if(collisionOn){
+                    direction="left";
+                }
+            }
+            else if( enTopY>nextY && enLeftX<nextX){
+                direction="up";
+                if(collisionOn){
+                    direction = "right";
+                }
+            }
+            else if( enTopY<nextY && enLeftX<nextX){
+                direction="down";
+                if(collisionOn){
+                    direction = "right";
+                }
+            }
+            else if( enTopY<nextY && enLeftX>nextX){
+                direction="down";
+                if(collisionOn){
+                    direction = "left";
+                }
+            }
+            int nextCol = pathFinder.getPathList().get(0).getCol();
+            int nextRow = pathFinder.getPathList().get(0).getRow();
+
+        }
+
+    }
     public void slash(Entity entity){
         entity.setHP(entity.getHP()-damage);
         gameCFG.getKeyboardController().setSlash(false);
@@ -378,6 +434,14 @@ public class Entity {
 
     public int getSpriteCycle() {
         return spriteCycle;
+    }
+
+    public PathFinder getPathFinder() {
+        return pathFinder;
+    }
+
+    public void setPathFinder(PathFinder pathFinder) {
+        this.pathFinder = pathFinder;
     }
 }
 

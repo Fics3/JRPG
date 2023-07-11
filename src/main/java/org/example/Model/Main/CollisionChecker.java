@@ -1,12 +1,9 @@
 package org.example.Model.Main;
 
+import org.example.IO.InOut;
 import org.example.Model.Entity.Entity;
-import org.example.Model.Object;
+import org.example.Model.Object.Object;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class CollisionChecker {
@@ -15,23 +12,12 @@ public class CollisionChecker {
     Entity entity;
 
 
-    public CollisionChecker(GameCFG gameCFG, Entity entity) throws IOException {
+    public CollisionChecker(GameCFG gameCFG, Entity entity) {
+        InOut inOut = new InOut();
         this.entity = entity;
         this.gameCFG = gameCFG;
         mapColData = new int[gameCFG.getMaxWorldCol()][gameCFG.getMaxWorldRow()];
-        getDataMap();
-    }
-    public void getDataMap() throws IOException {
-        InputStream inputStreamData = getClass().getResourceAsStream("/DataMaps/dataMap_03.txt");
-        BufferedReader bufferedReaderData = new BufferedReader(new InputStreamReader(inputStreamData));
-        for (int i = 0; i < gameCFG.getMaxWorldRow(); i++) {
-            String lineData= bufferedReaderData.readLine();
-            for (int j = 0; j < gameCFG.getMaxWorldCol(); j++) {
-
-                String[] collision=lineData.split(" ");
-                mapColData[j][i]=Integer.parseInt(collision[j]);
-            }
-        }
+        mapColData = inOut.getDataMap(gameCFG);
     }
 
     public void checkTile(Entity entity) {
@@ -85,8 +71,7 @@ public class CollisionChecker {
         }
     }
 
-    public void checkObject(Entity entity, boolean player) {
-        int idx = 999;
+    public Integer checkObject(Entity entity, boolean player) {
         for (Object obj : gameCFG.getObjects()) {
             if (obj != null) {
                 entity.setSolidArea(entity.getX() + entity.getSolidArea().x, entity.getY() + entity.getSolidArea().y);
@@ -95,12 +80,13 @@ public class CollisionChecker {
                     case "up":
                         entity.setSolidY(entity.getSolidArea().y - entity.getSpeed() / 2);
                         if (entity.getSolidArea().intersects(obj.getSolidArea())) {
-                            System.out.println("up col");
                             if (obj.isCollision()) {
                                 entity.setCollisionOn(true);
                             }
-                            if (player) {
-                                idx = obj.getId();
+                            else {
+                                if(player){
+                                    return obj.getId();
+                                }
                             }
                         }
                         break;
@@ -110,6 +96,11 @@ public class CollisionChecker {
                             if (obj.isCollision()) {
                                 entity.setCollisionOn(true);
                             }
+                            else {
+                                if(player){
+                                    return obj.getId();
+                                }
+                            }
                         }
                         break;
                     case "right":
@@ -117,6 +108,12 @@ public class CollisionChecker {
                         if (entity.getSolidArea().intersects(obj.getSolidArea())) {
                             if (obj.isCollision()) {
                                 entity.setCollisionOn(true);
+                            }
+                            else {
+                                if(player){
+                                    return obj.getId();
+
+                                }
                             }
                         }
                         break;
@@ -126,13 +123,22 @@ public class CollisionChecker {
                             if (obj.isCollision()) {
                                 entity.setCollisionOn(true);
                             }
+                            else {
+                                if(player){
+                                    return obj.getId();
+
+                                }
+                            }
                         }
                         break;
                 }
             }
             entity.setSolidArea(entity.getSolidDefaultX(), entity.getSolidDefaultY());
+            assert obj != null;
             obj.setSolidArea(obj.getSolidAreaDefaultX(), obj.getSolidAreaDefaultY());
+
         }
+        return null;
     }
 
     public int checkEntity(Entity entity, ArrayList<Entity> target) {
