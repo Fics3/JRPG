@@ -3,15 +3,15 @@ package org.example.Model.Object.Armor;
 import org.example.Model.Main.GameCFG;
 import org.example.Model.Object.Object;
 
-public class OBJ_leatherChestplate extends Object {
+public class OBJ_ironBoots extends Object {
     private int gainHP;
-    public OBJ_leatherChestplate(GameCFG gameCFG) {
+    public OBJ_ironBoots(GameCFG gameCFG) {
         super(gameCFG);
-        setName("leatherChestplate");
-        setGainHP(9);
+        setName("ironBoots");
+        setGainHP(10);
         setEquipable(true);
-        setChestplate(true);
-        setDescription("Old leather jacket [gain "+getGainHP()+" HP]");
+        setBoots(true);
+        setDescription("Just an iron boots [gain "+getGainHP()+" HP]");
     }
 
     public int getGainHP() {

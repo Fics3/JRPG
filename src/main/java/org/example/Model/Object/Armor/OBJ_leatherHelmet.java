@@ -11,7 +11,7 @@ public class OBJ_leatherHelmet extends Object {
         setGainHP(5);
         setEquipable(true);
         setHelmet(true);
-        setDescription("Old leather hood [gain "+getGainHP()+" damage]");
+        setDescription("Old leather hood [gain "+getGainHP()+" HP]");
     }
 
     public int getGainHP() {

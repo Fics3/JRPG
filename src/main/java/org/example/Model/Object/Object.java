@@ -174,4 +174,7 @@ public class Object {
     public GameCFG getGameCFG() {
         return gameCFG;
     }
+    public void use(){
+
+    }
 }

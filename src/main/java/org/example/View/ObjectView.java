@@ -5,7 +5,6 @@ import org.example.Model.Object.Object;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Objects;
 
 
 public class ObjectView {
@@ -17,9 +16,7 @@ public class ObjectView {
         this.gamePanel=gamePanel;
         this.object=object;
         getImages();
-//        if(Objects.equals(object.getName(), "chest")) {
-//            setImage(inOut.setupObj("/Objects/chest.png"));
-//        }
+
     }
     public void draw(Graphics2D graphics2D) {
         if (object.getX()+gamePanel.getGameCFG().getTileSize() > gamePanel.getGameCFG().getPlayer().getX() - gamePanel.getPlayerView().getScreenX() &&
