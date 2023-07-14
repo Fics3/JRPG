@@ -22,17 +22,26 @@ public class FightModel{
                 entityMove(player,entity);
             }
         }
-        player.getGameCFG().deleteNpc(entity);
-        player.lvlUp(10);
-        player.getGameCFG().setGameState(player.getGameCFG().getLoadEntity());
+        if(entity.getHP()<=0) {
+            player.getGameCFG().deleteNpc(entity);
+            player.lvlUp(10);
+            player.getGameCFG().setGameState(player.getGameCFG().getLoadEntity());
+        }
+        else if (player.getHP()<=0){
+            player.getGameCFG().setGameState(player.getGameCFG().getGameOverState());
+        }
     }
 
-    public void playerMove(Player player,Entity entity){
+    public void playerMove(Player player,Entity entity) {
         while (turn) {
-            System.out.print("");
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
 //            System.out.println("PlayerHp: "+player.getHP());
 //            System.out.println("EnemyHP: "+entity.getHP());
-            if(player.getKeyboardController().isFight()) {
+            if (player.getKeyboardController().isFight()) {
                 if (player.getKeyboardController().isSlash()) {
                     player.slash(entity);
                     setTurn(false);
@@ -44,15 +53,40 @@ public class FightModel{
                     player.getKeyboardController().setFight(false);
                     break;
                 }
-            }
-            else if(player.getKeyboardController().isMagic()){
-                if(player.getKeyboardController().isRestoreHealth() && player.getMana()>=5){
+            } else if (player.getKeyboardController().isMagic()) {
+                if (player.getKeyboardController().isRestoreHealth() && player.getMana() >= 5) {
                     player.restoreHealth();
                     setTurn(false);
                     player.getKeyboardController().setMagic(false);
                 }
+            } else if (player.getKeyboardController().isItems()) {
+                if (player.getManaPotions() > 0 && player.getHeathPotions() > 0) {
+                    if (player.getKeyboardController().isFirstPotion()) {
+                        player.removePotion("healthPotion");
+                        player.setHeathPotions(player.getHeathPotions() - 1);
+                        player.getKeyboardController().setFirstPotion(false);
+                    }
+                    if (player.getKeyboardController().isSecondPotion()) {
+                        player.removePotion("manaPotion");
+                        player.setManaPotions(player.getManaPotions() - 1);
+                        player.getKeyboardController().setSecondPotion(false);
+                    }
+                }
+                if (player.getManaPotions() > 0 && player.getHeathPotions() == 0) {
+                    if (player.getKeyboardController().isFirstPotion()) {
+                        player.removePotion("manaPotion");
+                        player.setManaPotions(player.getManaPotions() - 1);
+                        player.getKeyboardController().setFirstPotion(false);
+                    }
+                }
+                if (player.getManaPotions() == 0 && player.getHeathPotions() > 0) {
+                    if (player.getKeyboardController().isFirstPotion()) {
+                        player.removePotion("healthPotion");
+                        player.setHeathPotions(player.getHeathPotions() - 1);
+                        player.getKeyboardController().setFirstPotion(false);
+                    }
+                }
             }
-//            System.out.println("EnemyHP: "+entity.getHP());
         }
     }
     public void entityMove(Player player,Entity entity){

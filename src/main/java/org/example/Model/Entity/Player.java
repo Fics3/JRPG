@@ -3,11 +3,12 @@ package org.example.Model.Entity;
 import org.example.Model.FightModel;
 import org.example.Model.Main.GameCFG;
 import org.example.Model.Main.KeyboardController;
-import org.example.Model.Object.OBJ_woodSword;
+import org.example.Model.Object.Weapon.OBJ_woodSword;
 import org.example.Model.Object.Object;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Player extends Entity {
     private final KeyboardController keyboardController;
@@ -23,6 +24,8 @@ public class Player extends Entity {
     private Object currentHelmet;
     private Object currentChest;
     private Object currentBoots;
+    private int heathPotions=0;
+    private int manaPotions=0;
 
     public Player(GameCFG gameCFG, KeyboardController keyboardController)  {
         super(gameCFG);
@@ -37,6 +40,7 @@ public class Player extends Entity {
         setCurrentWeapon(new OBJ_woodSword(gameCFG));
         setSolidArea(new Rectangle(8, 16, (int) (getGameCFG().getTileSize() / 1.5), (int) (getGameCFG().getTileSize() / 1.5)));
         setDafautl();
+        gameCFG.setGameState(gameCFG.getLoadInventory());
     }
 
     public void setDafautl() {
@@ -44,7 +48,11 @@ public class Player extends Entity {
         setY(getGameCFG().getMaxWorldHeight() / 2);
         setLvl(1);
         setSpeed(4);
-        setMaxHP(50);
+        setMaxHP(10);
+        setBaseHP(getMaxHP());
+        if(currentHelmet!=null) setMaxHP(getMaxHP()+currentHelmet.getGainHP());
+        if(currentBoots!=null) setMaxHP(getMaxHP()+currentBoots.getGainHP());
+        if(currentChest!=null) setMaxHP(getMaxHP()+currentChest.getGainHP());
         setHP(getMaxHP());
         setDamage(getLvl() + currentWeapon.getDamage());
         setMaxMana(20);
@@ -69,15 +77,28 @@ public class Player extends Entity {
             setCollisionOn(false);
             getGameCFG().getCollisionChecker().checkTile(this);
             Integer objId = getGameCFG().getCollisionChecker().checkObject(this, true);
-//            System.out.println(getGameCFG().getObjects().size());
-            if(objId != null && inventoryCapacity<inventorySize) {
-                addItem(getGameCFG().getObjectWithId(objId));
-                getGameCFG().getObjects().remove(getGameCFG().getObjectWithId(objId));
-                getGameCFG().setGameState(getGameCFG().getLoadObjects());
-
+            if(!this.isCollision()) {
+                if (objId != null && inventoryCapacity < inventorySize && !getGameCFG().getObjectWithId(objId).isCollision() ) {
+                    addItem(getGameCFG().getObjectWithId(objId));
+                    if (Objects.equals(getGameCFG().getObjectWithId(objId).getName(), "healthPotion")) heathPotions++;
+                    else if (Objects.equals(getGameCFG().getObjectWithId(objId).getName(), "manaPotion")) manaPotions++;
+                    getGameCFG().getObjects().remove(getGameCFG().getObjectWithId(objId));
+                    getGameCFG().setGameState(getGameCFG().getLoadObjects());
+                }
             }
+            else {
+                if (objId != null && keyboardController.isUseObject()) {
+                    getGameCFG().getObjectWithId(objId).use();
+                    getGameCFG().setGameState(getGameCFG().getLoadGame());
+                    getGameCFG().getObjects().remove(getGameCFG().getObjectWithId(objId));
+                }
+            }
+
+//            if(objId != null && getGameCFG().getObjectWithId(objId).isCollision() && keyboardController.isUseObject()) {
+//                getGameCFG().getObjectWithId(objId);
+//            }
             int idNpc = getGameCFG().getCollisionChecker().checkEntity(this, getGameCFG().getNpcs());
-            if (idNpc != 0 && getKeyboardController().isDialogue() && !getGameCFG().getNpc(idNpc).isEnemy()) {
+            if (idNpc != 0 && getKeyboardController().isUseObject() && !getGameCFG().getNpc(idNpc).isEnemy()) {
                 interactNPC();
                 speak(idNpc);
             }
@@ -120,6 +141,7 @@ public class Player extends Entity {
             setExp(getMaxExp()-getExp());
             setLvl(getLvl()+1);
             setMaxHP(getMaxHP()+10*getLvl());
+            setHP(getMaxHP());
             setDamage(getDamage()+5*getLvl());
             setMaxMana(getMaxMana()+5*getLvl());
         }
@@ -152,9 +174,20 @@ public class Player extends Entity {
         });
         thread.start();
     }
+    public void interactEnemy(Entity entity) throws InterruptedException {
+        getGameCFG().setGameState(getGameCFG().getFightState());
+        Thread thread = new Thread(() -> {
+            try {
+                fightModel.fight(Player.this,entity);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        thread.start();
+    }
     public void interactNPC() {
         getGameCFG().setGameState(getGameCFG().getDialogueState());
-        keyboardController.setDialogue(false);
+        keyboardController.setUseObject(false);
     }
     public ArrayList<String> getStats(){
         ArrayList<String> fightMenu = new ArrayList<>();
@@ -169,6 +202,14 @@ public class Player extends Entity {
         return fightMenu;
     }
 
+    public void removePotion(String potionName){
+        for (Object object : inventory) {
+            if(Objects.equals(object.getName(), potionName)){
+                getGameCFG().consume(object);
+                break;
+            }
+        }
+    }
     public KeyboardController getKeyboardController() {
         return keyboardController;
     }
@@ -263,6 +304,22 @@ public class Player extends Entity {
 
     public int getInventoryCapacity() {
         return inventoryCapacity;
+    }
+
+    public int getHeathPotions() {
+        return heathPotions;
+    }
+
+    public void setHeathPotions(int heathPotions) {
+        this.heathPotions = heathPotions;
+    }
+
+    public int getManaPotions() {
+        return manaPotions;
+    }
+
+    public void setManaPotions(int manaPotions) {
+        this.manaPotions = manaPotions;
     }
 }
 

@@ -1,35 +1,99 @@
 package org.example.Model.Main;
 
 
+import org.example.IO.SaveLoad;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 
-
 public class KeyboardController implements KeyListener {
-
+    private final GameCFG gameCFG;
     private boolean upPressed,downPressed,leftPressed, rightPressed;
-    private boolean dialogue = false;
-    private GameCFG gameCFG;
+    private boolean useObject = false;
+
     private boolean fight=false;
     private boolean slash=false;
     private boolean vampireSlash=false;
     private boolean magic=false;
     private boolean items=false;
     private boolean restoreHealth=false;
+    private boolean firstPotion = false;
+    private boolean secondPotion = false;
+
+    private boolean editor = false;
+    private boolean row = false;
+
     private boolean use = false;
+
+    private boolean respawn  = false;
+
+    private int commandNum = 0;
+    private final SaveLoad saveLoad;
+
     public KeyboardController(GameCFG gameCFG){
         this.gameCFG=gameCFG;
+        saveLoad = new SaveLoad(gameCFG);
     }
     @Override
     public void keyTyped(KeyEvent e) {
-
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
-        if (gameCFG.getGameState() == gameCFG.getAdventureState()) {
+        if(gameCFG.getGameState() == gameCFG.getTitleState()){
+            if(code==KeyEvent.VK_S){
+                if(commandNum==4){
+                    commandNum=0;
+                }
+                else commandNum++;
+            }
+            if(code==KeyEvent.VK_W){
+                if(commandNum==0){
+                    commandNum=4;
+                }
+                else commandNum--;
+            }
+            if(code == KeyEvent.VK_ENTER){
+                if(commandNum == 0){
+                    gameCFG.setupGame();
+                    gameCFG.setGameState(gameCFG.getLoadGame());
+                }
+                if(commandNum == 1){
+                        gameCFG.loadGame();
+                        saveLoad.load();
+                        gameCFG.setGameState(gameCFG.getLoadGame());
+                }
+                if(commandNum == 3){
+                    gameCFG.setGameState(gameCFG.getLevelEditorState());
+                }
+            }
+        }
+        else if( gameCFG.getGameState() == gameCFG.getLevelEditorState()){
+            if(!isEditor()){
+                if(code==KeyEvent.VK_A){
+                    row= !row;
+                }
+                if(code==KeyEvent.VK_D){
+                    row = !row;
+                }
+                if(code == KeyEvent.VK_S){
+                    if(row && gameCFG.getLevelEditor().getRow()>0){
+                        gameCFG.getLevelEditor().setRow(gameCFG.getLevelEditor().getRow()-1);}
+                    else if(!row && gameCFG.getLevelEditor().getCol()>0 ) gameCFG.getLevelEditor().setCol(gameCFG.getLevelEditor().getCol()-1);
+                }
+                if(code == KeyEvent.VK_W) {
+                    if (row && gameCFG.getLevelEditor().getRow()<100) {
+                        gameCFG.getLevelEditor().setRow(gameCFG.getLevelEditor().getRow() + 1);}
+                    else if(!row && gameCFG.getLevelEditor().getCol()<100) gameCFG.getLevelEditor().setCol(gameCFG.getLevelEditor().getCol() + 1);
+                }
+                if(code == KeyEvent.VK_ENTER && gameCFG.getLevelEditor().getRow()>0 && gameCFG.getLevelEditor().getCol()>0){
+                    editor=true;
+                }
+            }
+        }
+        else if (gameCFG.getGameState() == gameCFG.getAdventureState()) {
             if (code == KeyEvent.VK_W) {
                 upPressed = true;
             }
@@ -42,12 +106,14 @@ public class KeyboardController implements KeyListener {
             if (code == KeyEvent.VK_D) {
                 rightPressed = true;
             }
-
+            if (code == KeyEvent.VK_F5){
+                saveLoad.save();
+            }
             if(code == KeyEvent.VK_ESCAPE){
                 gameCFG.setGameState(gameCFG.getPauseState());
             }
             if(code == KeyEvent.VK_SPACE && gameCFG.getPlayer().isCollisionOn()){
-                dialogue=true;
+                useObject =true;
 //                gameCFG.setGameState(gameCFG.getDialogueState());
             }
             if(code == KeyEvent.VK_I){
@@ -85,25 +151,32 @@ public class KeyboardController implements KeyListener {
             }
             else if(code == KeyEvent.VK_SPACE&& gameCFG.getGameState()==gameCFG.getDialogueState()){
                     gameCFG.setGameState(gameCFG.getAdventureState());
-                    setDialogue(false);
+                    setUseObject(false);
             }
             else if(gameCFG.getGameState()==gameCFG.getFightState()){
-                if(code == KeyEvent.VK_1 && !fight){
+                if(code == KeyEvent.VK_1 && !fight && !magic && !items){
                     setFight(true);
                 }
-                else if( code== KeyEvent.VK_2 && !magic){
+                else if( code== KeyEvent.VK_2 && !fight && !magic && !items){
                     setMagic(true);
+                }
+                else if ( code == KeyEvent.VK_3 && !fight && !magic && !items){
+                    setItems(true);
+                }
+                if(code == KeyEvent.VK_Q && items){
+                    firstPotion =true;
+                }
+                if(code == KeyEvent.VK_W && items){
+                    secondPotion=true;
                 }
                 if(code == KeyEvent.VK_Q && magic){
                     setRestoreHealth(true);
                 }
                 if(code == KeyEvent.VK_Q && fight){
                     setSlash(true);
-//                setFight(false);
                 }
                 else if(code== KeyEvent.VK_W && fight){
                     setVampireSlash(true);
-//                setFight(false);
                 }
                 if(code == KeyEvent.VK_ESCAPE){
                     fight=false;
@@ -111,8 +184,17 @@ public class KeyboardController implements KeyListener {
                     items=false;
                 }
             }
+            else if( gameCFG.getGameState()== gameCFG.getGameOverState()){
+                if(code == KeyEvent.VK_1){
+                    respawn = true;
+                }
+                else if(code == KeyEvent.VK_2){
+                    gameCFG.setGameState(gameCFG.getTitleState());
+                }
+            }
+            else if(gameCFG.getGameState()==gameCFG.getOptionsState()){
 
-
+        }
     }
 
     @Override
@@ -160,12 +242,12 @@ public class KeyboardController implements KeyListener {
         this.rightPressed = rightPressed;
     }
 
-    public boolean isDialogue() {
-        return dialogue;
+    public boolean isUseObject() {
+        return useObject;
     }
 
-    public void setDialogue(boolean dialogue) {
-        this.dialogue = dialogue;
+    public void setUseObject(boolean useObject) {
+        this.useObject = useObject;
     }
 
     public boolean isFight() {
@@ -222,5 +304,52 @@ public class KeyboardController implements KeyListener {
 
     public void setUse(boolean use) {
         this.use = use;
+    }
+
+    public boolean isFirstPotion() {
+        return firstPotion;
+    }
+
+    public void setFirstPotion(boolean firstPotion) {
+        this.firstPotion = firstPotion;
+    }
+
+    public boolean isSecondPotion() {
+        return secondPotion;
+    }
+
+    public void setSecondPotion(boolean secondPotion) {
+        this.secondPotion = secondPotion;
+    }
+
+    public boolean isRespawn() {
+        return respawn;
+    }
+
+    public void setRespawn(boolean respawn) {
+        this.respawn = respawn;
+    }
+
+    public int getCommandNum() {
+        return commandNum;
+    }
+
+    public void setCommandNum(int commandNum) {
+        this.commandNum = commandNum;
+    }
+
+    public boolean isEditor() {
+        return editor;
+    }
+
+    public void setEditor(boolean editor) {
+        this.editor = editor;
+    }
+
+    public void setRow(boolean row) {
+        this.row = row;
+    }
+    public boolean isRow(){
+        return row;
     }
 }

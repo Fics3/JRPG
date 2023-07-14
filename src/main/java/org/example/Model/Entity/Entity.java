@@ -5,7 +5,6 @@ import org.example.Model.PathFinder;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.Random;
 
 public class Entity {
@@ -19,8 +18,8 @@ public class Entity {
     private String direction;
     private Rectangle solidArea= new Rectangle(0, 0 ,24,16);
     private int solidDefaultX, solidDefaultY;
-    private boolean collisionOn=false;
-    private GameCFG gameCFG;
+    private boolean collisionOn = false;
+    private final GameCFG gameCFG;
     private int id;
     private ArrayList<String> dialogues = new ArrayList<>();
     private boolean isEnemy = false;
@@ -32,18 +31,21 @@ public class Entity {
     private int spriteCycle = 0;
     private int actionLockCounter = 0;
     private PathFinder pathFinder;
+    private int baseHP = 10;
+    private int defaultX;
+    private int defaultY;
 
 
-    public Entity(GameCFG gameCFG){
+
+    //    public Entity(GameCFG gameCFG){
+//        this.gameCFG = gameCFG;
+//    }
+    public  Entity(GameCFG gameCFG) {
         this.gameCFG = gameCFG;
     }
-    public  Entity(GameCFG gameCFG,int x,int y,int id) {
-        this.gameCFG = gameCFG;
-        pathFinder= new PathFinder(gameCFG);
-//        if(Objects.equals(name, "GreenBoy")){
-            setX(x);
-            setY(y);
-//        }
+    public void defaultPosition(){
+        setX(getDefaultX());
+        setY(getDefaultY());
     }
 
     public void setAction(){
@@ -65,11 +67,9 @@ public class Entity {
             }
             actionLockCounter=0;
         }
-
     }
+
     public void checkCollision(){
-        gameCFG.getCollisionChecker().checkTile(this);
-        gameCFG.getCollisionChecker().checkObject(this,false);
     }
 
     public void setDialogue(String txt){
@@ -77,21 +77,16 @@ public class Entity {
         currentDialogue = dialogues.get(0);
     }
     public void update(){
-//        setDamage(damage*lvl);
-//        setMaxHP(maxHP+5*lvl);
-//        setAction();
         setAction();
-        setCollisionOn(false);
-        checkCollision();
-        if(isEnemy) runToPlayer();
-        if(isCollisionOn()){
-            switch (getDirection()){
-                case "up":setY(getY()+getSpeed()); break;
-                case "down":setY(getY()-getSpeed()); break;
-                case "right":setX(getX()-getSpeed()); break;
-                case "left":setX(getX()+getSpeed()); break;
-            }
-        }
+        if(isEnemy) {runToPlayer();}
+//        if(isCollisionOn()){
+//            switch (getDirection()){
+//                case "up":setY(getY()+getSpeed()); break;
+//                case "down":setY(getY()-getSpeed()); break;
+//                case "right":setX(getX()-getSpeed()); break;
+//                case "left":setX(getX()+getSpeed()); break;
+//            }
+//        }
         if(!isCollisionOn()){
             switch (getDirection()){
                 case "up":setY(getY()-getSpeed()); break;
@@ -100,6 +95,19 @@ public class Entity {
                 case "left":setX(getX()-getSpeed()); break;
             }
         }
+        setCollisionOn(false);
+
+        gameCFG.getCollisionChecker().checkTile(this);
+        gameCFG.getCollisionChecker().checkObject(this,false);
+        boolean tmp =  gameCFG.getCollisionChecker().checkPlayer(this);
+        if(tmp){
+            try {
+                if(this.isEnemy)gameCFG.getPlayer().interactEnemy(this.getId());
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         spriteCycle++;
         if (spriteCycle > 15) {
             if (getSpriteNum() == 1) setSpriteNum(2);
@@ -160,7 +168,6 @@ public class Entity {
         }
 
         }
-
     public void searchPath(int goalCol, int goalRow){
         int startCol = (x + solidArea.x)/gameCFG.getTileSize();
         int startRow = (y + solidArea.y)/gameCFG.getTileSize();
@@ -219,6 +226,12 @@ public class Entity {
 
         }
 
+    }
+    public void lvlUp(){
+        setLvl(lvl+1);
+        setMaxHP(baseHP+10*lvl);
+        setDamage(getDamage()+lvl);
+        setHP(getMaxHP());
     }
     public void slash(Entity entity){
         entity.setHP(entity.getHP()-damage);
@@ -442,6 +455,31 @@ public class Entity {
 
     public void setPathFinder(PathFinder pathFinder) {
         this.pathFinder = pathFinder;
+    }
+
+
+    public int getBaseHP() {
+        return baseHP;
+    }
+
+    public void setBaseHP(int baseHP) {
+        this.baseHP = baseHP;
+    }
+
+    public int getDefaultY() {
+        return defaultY;
+    }
+
+    public void setDefaultY(int defaultY) {
+        this.defaultY = defaultY;
+    }
+
+    public int getDefaultX() {
+        return defaultX;
+    }
+
+    public void setDefaultX(int defaultX) {
+        this.defaultX = defaultX;
     }
 }
 

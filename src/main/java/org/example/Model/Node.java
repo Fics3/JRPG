@@ -1,6 +1,5 @@
 package org.example.Model;
 
-import javax.swing.plaf.nimbus.NimbusStyle;
 
 public class Node {
     protected Node parent;

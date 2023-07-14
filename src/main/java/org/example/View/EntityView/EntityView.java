@@ -8,7 +8,6 @@ import org.example.View.UtilityTools;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Objects;
 
 public class EntityView {
     private int spriteNum=2;

@@ -2,7 +2,6 @@ package org.example.Model.Main;
 
 import org.example.Model.Entity.Entity;
 import org.example.Model.Entity.Player;
-import org.example.Model.FightModel;
 import org.example.Model.Object.Object;
 
 import java.util.ArrayList;
@@ -12,15 +11,20 @@ public class GameCFG {
     private final int scale = 3;
     private int tileSize= originalTileSize*scale;
     private int gameState;
+    private final int titleState = 0;
     private final int adventureState = 1;
     private final int pauseState = 2;
     private final int dialogueState = 3;
     private final int fightState = 4;
     private final int statState = 5;
-    private final int loadEntity = 6;
-    private final int loadObjects = 7;
-    private final int loadInventory = 8;
-    private AssetsSetter assetsSetter = new AssetsSetter(this);
+    private final int optionsState = 6;
+    private final int gameOverState = 7;
+    private final int loadEntity = 8;
+    private final int loadObjects = 9;
+    private final int loadInventory = 10;
+    private final int loadGame = 11;
+    private final int levelEditorState = 12;
+
     private final int maxWorldCol=50;
     private final int maxWorldRow=50;
     private final int maxScreenCol=16;
@@ -30,50 +34,60 @@ public class GameCFG {
     private int screenWight=getTileSize()*maxScreenCol;//768
     private int screenHeight=getTileSize()*maxScreenRow;//576
 
-    private CollisionChecker collisionChecker ;
-
     private ArrayList<Object> objects = new ArrayList<>();
     private ArrayList<Entity> npcs = new ArrayList<>();
-    private ArrayList<Entity> enemies = new ArrayList<>();
-    private KeyboardController keyboardController = new KeyboardController(this);
-    private Player player = new Player(this, keyboardController);
-    private FightModel fightModel;
+
+    private CollisionChecker collisionChecker ;
+    private AssetsSetter assetsSetter = new AssetsSetter(this);
+    private final KeyboardController keyboardController = new KeyboardController(this);
+    private LevelEditor levelEditor = new LevelEditor(this);
+    ;
+    private Player player;
 
 
     private String tmp="RAP";
 
     public GameCFG (){
-        collisionChecker = new CollisionChecker(this, player);
-        assetsSetter.setObject();
-        assetsSetter.setNpc();
-        assetsSetter.setEnemy();
-        setGameState(getAdventureState());
+        setupGame();
+        setGameState(getTitleState());
     }
 
     public void setupGame() {
-        setGameState(getAdventureState());
+        objects.clear();
+        npcs.clear();
+        assetsSetter.setObject();
+//        assetsSetter.setNpc();
+//        assetsSetter.setEnemy();
+        player = new Player(this, keyboardController);
+        collisionChecker = new CollisionChecker(this, player);
+    }
+    public void loadGame(){
+        player = new Player(this, keyboardController);
+        collisionChecker = new CollisionChecker(this, player);
     }
         public void update(){
-            if(getGameState() == getAdventureState()) {
-                player.update();
+        if(getGameState()==getTitleState()){
+
+        }
+        else if(getGameState() == getAdventureState()) {
+            player.update();
                 for (Entity npc : npcs) {
                     npc.update();
                 }
-            }
-            else if (getGameState() == getPauseState()){
-            }
-            else if (getGameState() == getFightState()){
-            }
-            else if(getGameState() == getDialogueState()){
-            }
-            else if(getGameState() == getStatState()){
+        }
+        else if (getGameState() == getPauseState()){
+        }
+        else if (getGameState() == getFightState()){
+        }
+        else if(getGameState() == getDialogueState()){
+        }
+        else if(getGameState() == getStatState()){
                 if(player.getInventory().get(player.getInventorySlot()).getName()!=null) {
                     Object curObject = player.getInventory().get(player.getInventorySlot());
                     if(keyboardController.isUse()){
                         if(curObject.isConsumable()){
-                            curObject.consume();
-                            player.getInventory().remove(curObject);
-                            setGameState(loadObjects);
+                            consume(curObject);
+                            setGameState(loadInventory);
                         }
                         if(curObject.isWeapon()){
                             equipWeapon(curObject);
@@ -87,10 +101,32 @@ public class GameCFG {
                         if(curObject.isBoots()){
                             equipBoots(curObject);
                         }
-                        keyboardController.setUse(false);
+
                     }
                 }
+                keyboardController.setUse(false);
             }
+        else if(getGameState() == getGameOverState()) {
+                if (keyboardController.isRespawn()) {
+                    for (Entity entity : npcs) {
+                        if (entity.getLvl() < 10 && entity.isEnemy()) {
+                            entity.lvlUp();
+                            entity.defaultPosition();
+
+                        }
+                    }
+                    int tmpLvl = player.getLvl();
+                    player.setDafautl();
+                    player.setLvl(tmpLvl);
+                    setGameState(getAdventureState());
+                    keyboardController.setRespawn(false);
+                }
+            }
+        else if(getGameState() == getLevelEditorState()){
+            if(keyboardController.isEditor()){
+                getLevelEditor().setLevel("DaDAaaa");
+            }
+        }
         }
     public Object getObjectWithId(int id ){
         for (Object object : objects) {
@@ -117,6 +153,12 @@ public class GameCFG {
             setGameState(loadInventory);
             player.setMaxHP(getPlayer().getMaxHP() + player.getCurrentHelmet().getGainHP());
         }
+    }
+    public void consume(Object object){
+        object.consume();
+        player.getInventory().remove(object);
+        player.setInventoryCapacity(player.getInventoryCapacity()-1);
+        player.getInventory().add(new Object(this));
     }
     public void equipChest(Object curObject){
         if (player.getCurrentChest() != null) {
@@ -170,9 +212,6 @@ public class GameCFG {
             setGameState(loadInventory);
             player.setDamage(getPlayer().getLvl() + player.getCurrentWeapon().getDamage());
         }
-    }
-    public void setEnemy(Entity entity){
-        this.enemies.add(entity);
     }
     public int getGameState() {
         return gameState;
@@ -278,15 +317,6 @@ public class GameCFG {
     public Player getPlayer() {
         return player;
     }
-
-    public ArrayList<Entity> getEnemies() {
-        return enemies;
-    }
-
-    public void setEnemies(ArrayList<Entity> enemies) {
-        this.enemies = enemies;
-    }
-
     public KeyboardController getKeyboardController() {
         return keyboardController;
     }
@@ -326,5 +356,33 @@ public class GameCFG {
 
     public int getLoadEntity() {
         return loadEntity;
+    }
+
+    public int getGameOverState() {
+        return gameOverState;
+    }
+
+    public int getTitleState() {
+        return titleState;
+    }
+
+    public int getOptionsState() {
+        return optionsState;
+    }
+
+    public int getLoadGame() {
+        return loadGame;
+    }
+
+    public int getLevelEditorState() {
+        return levelEditorState;
+    }
+
+    public LevelEditor getLevelEditor() {
+        return levelEditor;
+    }
+
+    public void setLevelEditor(LevelEditor levelEditor) {
+        this.levelEditor = levelEditor;
     }
 }

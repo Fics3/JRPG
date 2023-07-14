@@ -15,10 +15,8 @@ public class PlayerView extends EntityView {
     private int screenX;
     private int screenY;
 
-    private String direction ="up";
     private int spriteNum=2;
     private int spriteCycle = 0;
-    private int fightComNum = 0;
     private ArrayList<ObjectView> inventory = new ArrayList<>();
 
     private BufferedImage upStay, up1, up2,downStay, down1,down2,leftStay,left1,left2,rightStay,right1,right2;

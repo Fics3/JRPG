@@ -2,7 +2,6 @@ package org.example.Model;
 
 
 import org.example.IO.InOut;
-import org.example.Model.Entity.Entity;
 import org.example.Model.Main.GameCFG;
 
 import java.util.ArrayList;

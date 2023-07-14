@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
 public class TileManager {
 
     private Tile[] tiles;
-    private int mapDataNum[][];
+    private int[][] mapDataNum;
     GamePanel gamePanel;
 
     public TileManager(GamePanel gamePanel) {
@@ -52,7 +52,11 @@ public class TileManager {
             
         }
     }
-    public Tile getTiles(int value) {
+
+    public Tile[] getTiles() {
+        return tiles;
+    }
+    public Tile getTile(int value) {
         return tiles[value];
     }
 }

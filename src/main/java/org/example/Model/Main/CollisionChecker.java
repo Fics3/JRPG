@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class CollisionChecker {
     GameCFG gameCFG;
-    private int mapColData[][];
+    private int[][] mapColData;
     Entity entity;
 
 
@@ -54,7 +54,6 @@ public class CollisionChecker {
                 tileN1 = getMapColData(entityRightCol, entityTopRow);
                 tileN2 = getMapColData(entityRightCol, entityBotRow);
                 if (tileN1 == 1 && tileN2 == 1) {
-                    System.out.println(1);
                     entity.setCollisionOn(true);
                 }
                 break;
@@ -82,9 +81,16 @@ public class CollisionChecker {
                         if (entity.getSolidArea().intersects(obj.getSolidArea())) {
                             if (obj.isCollision()) {
                                 entity.setCollisionOn(true);
+                                entity.setSolidArea(entity.getSolidDefaultX(), entity.getSolidDefaultY());
+                                assert obj != null;
+                                obj.setSolidArea(obj.getSolidAreaDefaultX(), obj.getSolidAreaDefaultY());
+                                return obj.getId();
                             }
                             else {
                                 if(player){
+                                    entity.setSolidArea(entity.getSolidDefaultX(), entity.getSolidDefaultY());
+                                    assert obj != null;
+                                    obj.setSolidArea(obj.getSolidAreaDefaultX(), obj.getSolidAreaDefaultY());
                                     return obj.getId();
                                 }
                             }
@@ -95,9 +101,16 @@ public class CollisionChecker {
                         if (entity.getSolidArea().intersects(obj.getSolidArea())) {
                             if (obj.isCollision()) {
                                 entity.setCollisionOn(true);
+                                entity.setSolidArea(entity.getSolidDefaultX(), entity.getSolidDefaultY());
+                                assert obj != null;
+                                obj.setSolidArea(obj.getSolidAreaDefaultX(), obj.getSolidAreaDefaultY());
+                                return obj.getId();
                             }
                             else {
                                 if(player){
+                                    entity.setSolidArea(entity.getSolidDefaultX(), entity.getSolidDefaultY());
+                                    assert obj != null;
+                                    obj.setSolidArea(obj.getSolidAreaDefaultX(), obj.getSolidAreaDefaultY());
                                     return obj.getId();
                                 }
                             }
@@ -108,9 +121,16 @@ public class CollisionChecker {
                         if (entity.getSolidArea().intersects(obj.getSolidArea())) {
                             if (obj.isCollision()) {
                                 entity.setCollisionOn(true);
+                                entity.setSolidArea(entity.getSolidDefaultX(), entity.getSolidDefaultY());
+                                assert obj != null;
+                                obj.setSolidArea(obj.getSolidAreaDefaultX(), obj.getSolidAreaDefaultY());
+                                return obj.getId();
                             }
                             else {
                                 if(player){
+                                    entity.setSolidArea(entity.getSolidDefaultX(), entity.getSolidDefaultY());
+                                    assert obj != null;
+                                    obj.setSolidArea(obj.getSolidAreaDefaultX(), obj.getSolidAreaDefaultY());
                                     return obj.getId();
 
                                 }
@@ -122,11 +142,16 @@ public class CollisionChecker {
                         if (entity.getSolidArea().intersects(obj.getSolidArea())) {
                             if (obj.isCollision()) {
                                 entity.setCollisionOn(true);
+                                entity.setSolidArea(entity.getSolidDefaultX(), entity.getSolidDefaultY());
+                                assert obj != null;
+                                obj.setSolidArea(obj.getSolidAreaDefaultX(), obj.getSolidAreaDefaultY());
+                                return obj.getId();
                             }
                             else {
                                 if(player){
+                                    entity.setSolidArea(entity.getSolidDefaultX(), entity.getSolidDefaultY());
+                                    obj.setSolidArea(obj.getSolidAreaDefaultX(), obj.getSolidAreaDefaultY());
                                     return obj.getId();
-
                                 }
                             }
                         }
@@ -150,7 +175,6 @@ public class CollisionChecker {
                 case "up":
                     entity.setSolidY(entity.getSolidArea().y -= entity.getSpeed() );
                     if (entity.getSolidArea().intersects(npc.getSolidArea())) {
-//                        System.out.println("up col");
                         entity.setCollisionOn(true);
                         tmpId=npc.getId();
                     }
@@ -185,42 +209,47 @@ public class CollisionChecker {
         }
         return tmpId;
     }
-//    public void checkPlayer(Entity entity){
-//            entity.setSolidArea(entity.getX() + entity.getSolidArea().x, entity.getY() + entity.getSolidArea().y);
-//            gameCFG.getPlayer().setSolidArea(gameCFG.getPlayer().getX() + gameCFG.getPlayer().getSolidArea().x,
-//                    gameCFG.getPlayer().getY() + gameCFG.getPlayer().getSolidArea().y);
-//            switch (entity.getDirection()) {
-//                case "up":
-//                    entity.setSolidY(entity.getSolidArea().y - entity.getSpeed() / 2);
-//                    if (entity.getSolidArea().intersects(gameCFG.getPlayer().getSolidArea())) {
-//                        System.out.println("up col");
-//                        entity.setCollisionOn(true);
-//                    }
-//                    break;
-//                case "down":
-//                    entity.setSolidY(entity.getSolidArea().y += entity.getSpeed() / 2);
-//                    if (entity.getSolidArea().intersects(gameCFG.getPlayer().getSolidArea())) {
-//                        entity.setCollisionOn(true);
-//
-//                    }
-//                    break;
-//                case "right":
-//                    entity.setSolidX(entity.getSolidArea().x += entity.getSpeed() / 2);
-//                    if (entity.getSolidArea().intersects(gameCFG.getPlayer().getSolidArea())) {
-//                        entity.setCollisionOn(true);
-//
-//                    }
-//                    break;
-//                case "left":
-//                    entity.setSolidX(entity.getSolidArea().x -= entity.getSpeed() / 2);
-//                    if (entity.getSolidArea().intersects(gameCFG.getPlayer().getSolidArea())) {
-//                        entity.setCollisionOn(true);
-//                    }
-//                    break;
-//            }
-//            entity.setSolidArea(entity.getSolidDefaultX(), entity.getSolidDefaultY());
-//            gameCFG.getPlayer().setSolidArea(gameCFG.getPlayer().getSolidDefaultX(), gameCFG.getPlayer().getSolidDefaultX());
-//    }
+    public boolean checkPlayer(Entity entity){
+        boolean collision = false;
+            entity.setSolidArea(entity.getX() + entity.getSolidArea().x, entity.getY() + entity.getSolidArea().y);
+            gameCFG.getPlayer().setSolidArea(gameCFG.getPlayer().getX() + gameCFG.getPlayer().getSolidArea().x,
+                    gameCFG.getPlayer().getY() + gameCFG.getPlayer().getSolidArea().y);
+            switch (entity.getDirection()) {
+                case "up":
+                    entity.setSolidY(entity.getSolidArea().y - entity.getSpeed() / 2);
+                    if (entity.getSolidArea().intersects(gameCFG.getPlayer().getSolidArea())) {
+                        collision=true;
+                        entity.setCollisionOn(true);
+                    }
+                    break;
+                case "down":
+                    entity.setSolidY(entity.getSolidArea().y += entity.getSpeed() / 2);
+                    if (entity.getSolidArea().intersects(gameCFG.getPlayer().getSolidArea())) {
+                        collision=true;
+                        entity.setCollisionOn(true);
+
+                    }
+                    break;
+                case "right":
+                    entity.setSolidX(entity.getSolidArea().x += entity.getSpeed() / 2);
+                    if (entity.getSolidArea().intersects(gameCFG.getPlayer().getSolidArea())) {
+                        collision=true;
+                        entity.setCollisionOn(true);
+
+                    }
+                    break;
+                case "left":
+                    entity.setSolidX(entity.getSolidArea().x -= entity.getSpeed() / 2);
+                    if (entity.getSolidArea().intersects(gameCFG.getPlayer().getSolidArea())) {
+                        collision=true;
+                        entity.setCollisionOn(true);
+                    }
+                    break;
+            }
+            entity.setSolidArea(entity.getSolidDefaultX(), entity.getSolidDefaultY());
+            gameCFG.getPlayer().setSolidArea(gameCFG.getPlayer().getSolidDefaultX(), gameCFG.getPlayer().getSolidDefaultX());
+            return collision;
+    }
     public int getMapColData(int col,int row) {
         return mapColData[col][row];
     }
