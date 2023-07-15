@@ -16,7 +16,6 @@ public class ObjectView {
         this.gamePanel=gamePanel;
         this.object=object;
         getImages();
-
     }
     public void draw(Graphics2D graphics2D) {
         if (object.getX()+gamePanel.getGameCFG().getTileSize() > gamePanel.getGameCFG().getPlayer().getX() - gamePanel.getPlayerView().getScreenX() &&

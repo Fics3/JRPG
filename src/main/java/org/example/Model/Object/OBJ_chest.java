@@ -2,7 +2,6 @@ package org.example.Model.Object;
 
 import org.example.Model.Main.AssetsSetter;
 import org.example.Model.Main.GameCFG;
-import org.example.Model.Object.Object;
 
 import java.util.Random;
 
