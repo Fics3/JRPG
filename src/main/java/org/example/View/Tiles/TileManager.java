@@ -16,7 +16,7 @@ public class TileManager {
     public TileManager(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
         InOut inOut = new InOut();
-        tiles=new Tile[53];
+        tiles=new Tile[102];
         mapDataNum = new int[gamePanel.getGameCFG().getMaxWorldCol()][gamePanel.getGameCFG().getMaxWorldRow()];
         mapDataNum=inOut.loadMap("/Maps/map_03.txt",gamePanel);
         getTileImage();

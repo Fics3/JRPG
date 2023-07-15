@@ -6,9 +6,8 @@ public class LevelEditor {
     private String name;
     private int[][] map;
     private int[][] dataMap;
-    private int[] tiles;
+    private int curTile= 0;
     private int[] objects;
-    private int curTile;
     private int curObj;
     private int col = 0;
     private int row = 0;
@@ -30,7 +29,7 @@ public class LevelEditor {
         }
     }
     public void placeTile(){
-        map[curCol][curRow] = tiles[curTile];
+        map[curCol][curRow] = curTile;
     }
     public void setCollision(){
         dataMap[curCol][curRow] = 1;
@@ -38,9 +37,6 @@ public class LevelEditor {
 
     public int[][] getMap() {
         return map;
-    }
-    public int[] getTiles() {
-        return tiles;
     }
     public GameCFG getGameCFG() {
         return gameCFG;
