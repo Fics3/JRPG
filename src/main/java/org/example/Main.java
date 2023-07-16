@@ -1,4 +1,6 @@
-package org.example.View;
+package org.example;
+
+import org.example.View.GamePanel;
 
 import javax.swing.*;
 

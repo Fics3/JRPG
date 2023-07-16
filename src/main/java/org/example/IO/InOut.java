@@ -15,36 +15,7 @@ public class InOut {
     public BufferedImage setup(String imageName) {
         BufferedImage image;
         try {
-            image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/NPC/" + imageName + ".png")));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return image;
-    }
-
-    public BufferedImage setupObj(String imagePath){
-        BufferedImage image;
-        try {
-            image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return image;
-    }
-
-    public BufferedImage setupPlayer(String imageName) {
-        BufferedImage image;
-        try {
-            image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Player/" + imageName + ".png")));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return image;
-    }
-    public BufferedImage setupTile(String imageName) {
-        BufferedImage image;
-        try {
-            image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(imageName)));
+            image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(imageName + ".png")));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

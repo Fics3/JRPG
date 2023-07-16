@@ -22,6 +22,7 @@ public class KeyboardController implements KeyListener {
     private boolean secondPotion = false;
 
     private boolean editor = false;
+    private boolean tiles = false;
     private boolean row = false;
 
     private boolean use = false;
@@ -90,6 +91,51 @@ public class KeyboardController implements KeyListener {
                 }
                 if(code == KeyEvent.VK_ENTER && gameCFG.getLevelEditor().getRow()>0 && gameCFG.getLevelEditor().getCol()>0){
                     editor=true;
+                    gameCFG.getLevelEditor().setLevel("sdsd");
+                }
+            }
+            else{
+                if(!tiles) {
+                    if (code == KeyEvent.VK_SPACE) {
+                        gameCFG.getLevelEditor().placeTile();
+                    }
+                    if (code == KeyEvent.VK_D) {
+                        if (gameCFG.getLevelEditor().getCurCol() < gameCFG.getLevelEditor().getCol() - 1)
+                            gameCFG.getLevelEditor().setCurCol(gameCFG.getLevelEditor().getCurCol() + 1);
+                    }
+                    if (code == KeyEvent.VK_A) {
+                        if (gameCFG.getLevelEditor().getCurCol() > 0)
+                            gameCFG.getLevelEditor().setCurCol(gameCFG.getLevelEditor().getCurCol() - 1);
+                    }
+                    if (code == KeyEvent.VK_S) {
+                        if (gameCFG.getLevelEditor().getCurRow() < gameCFG.getLevelEditor().getRow() - 1)
+                            gameCFG.getLevelEditor().setCurRow(gameCFG.getLevelEditor().getCurRow() + 1);
+                    }
+                    if (code == KeyEvent.VK_W) {
+                        if (gameCFG.getLevelEditor().getCurRow() > 0)
+                            gameCFG.getLevelEditor().setCurRow(gameCFG.getLevelEditor().getCurRow() - 1);
+                    }
+                }
+                else{
+                    if (code == KeyEvent.VK_D) {
+                        if (gameCFG.getLevelEditor().getCurTile() < 101)
+                            gameCFG.getLevelEditor().setCurTile(gameCFG.getLevelEditor().getCurTile() + 1);
+                    }
+                    if (code == KeyEvent.VK_A) {
+                        if (gameCFG.getLevelEditor().getCurTile() > 0)
+                            gameCFG.getLevelEditor().setCurTile(gameCFG.getLevelEditor().getCurTile() - 1);
+                    }
+//                    if (code == KeyEvent.VK_S) {
+//                        if (gameCFG.getLevelEditor().getCurRow() < gameCFG.getLevelEditor().getRow() - 1)
+//                            gameCFG.getLevelEditor().setCurRow(gameCFG.getLevelEditor().getCurRow() + 1);
+//                    }
+//                    if (code == KeyEvent.VK_W) {
+//                        if (gameCFG.getLevelEditor().getCurRow() > 0)
+//                            gameCFG.getLevelEditor().setCurRow(gameCFG.getLevelEditor().getCurRow() - 1);
+//                    }
+                }
+                if(code==KeyEvent.VK_SHIFT){
+                    tiles=!tiles;
                 }
             }
         }

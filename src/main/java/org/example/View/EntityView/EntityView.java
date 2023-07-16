@@ -20,7 +20,7 @@ public class EntityView {
     public EntityView(GamePanel gamePanel) {
         this.gamePanel=gamePanel;
 //        getImages(name);
-//        setup(name);
+//        setup("/NPC/"+name);
     }
     public EntityView(GamePanel gamePanel, Entity entity) {
         this.gamePanel=gamePanel;
@@ -71,18 +71,18 @@ public class EntityView {
         return utilityTools.scaleImage(inOut.setup(imageName),gamePanel.getGameCFG().getTileSize(),gamePanel.getGameCFG().getTileSize());
     }
     public void getImages(String name) {
-            this.setDown1(setup(name+"_FWalk1"));
-            this.setDownStay(setup(name+"_FWalkStay"));
-            this.setDown2(setup(name+"_FWalk2"));
-            this.setUp1(setup(name+"_BWalk1"));
-            this.setUpStay(setup(name+"_BWalkStay"));
-            this.setUp2(setup(name+"_BWalk2"));
-            this.setLeft1(setup(name+"_LWalk1"));
-            this.setLeftStay(setup(name+"_LWalkStay"));
-            this.setLeft2(setup(name+"_LWalk2"));
-            this.setRight1(setup(name+"_RWalk1"));
-            this.setRightStay(setup(name+"_RWalkStay"));
-            this.setRight2(setup(name+"_RWalk2"));
+            this.setDown1(setup("/NPC/"+name+"_FWalk1"));
+            this.setDownStay(setup("/NPC/"+name+"_FWalkStay"));
+            this.setDown2(setup("/NPC/"+name+"_FWalk2"));
+            this.setUp1(setup("/NPC/"+name+"_BWalk1"));
+            this.setUpStay(setup("/NPC/"+name+"_BWalkStay"));
+            this.setUp2(setup("/NPC/"+name+"_BWalk2"));
+            this.setLeft1(setup("/NPC/"+name+"_LWalk1"));
+            this.setLeftStay(setup("/NPC/"+name+"_LWalkStay"));
+            this.setLeft2(setup("/NPC/"+name+"_LWalk2"));
+            this.setRight1(setup("/NPC/"+name+"_RWalk1"));
+            this.setRightStay(setup("/NPC/"+name+"_RWalkStay"));
+            this.setRight2(setup("/NPC/"+name+"_RWalk2"));
 
     }
 

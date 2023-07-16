@@ -31,7 +31,7 @@ public class ObjectView {
         InOut inOut = new InOut();
         UtilityTools utilityTools = new UtilityTools();
         if(object.getName()!=null){
-        setImage(utilityTools.scaleImage(inOut.setupObj("/Objects/"+object.getName()+".png"),gamePanel.getGameCFG().getTileSize(),gamePanel.getGameCFG().getTileSize()));}
+        setImage(utilityTools.scaleImage(inOut.setup("/Objects/"+object.getName()),gamePanel.getGameCFG().getTileSize(),gamePanel.getGameCFG().getTileSize()));}
     }
     public void setImage(BufferedImage image) {
         this.image = image;

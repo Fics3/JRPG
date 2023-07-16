@@ -28,25 +28,25 @@ public class PlayerView extends EntityView {
     }
 
     public void getPlayerImage()  {
-            this.setDown1(setupPlayer("FWalk1"));
-            this.setDownStay(setupPlayer("FStay"));
-            this.setDown2(setupPlayer("FWalk2"));
-            this.setUp1(setupPlayer("BWalk1"));
-            this.setUpStay(setupPlayer("BStay"));
-            this.setUp2(setupPlayer("BWalk2"));
-            this.setLeft1(setupPlayer("LWalk1"));
-            this.setLeftStay(setupPlayer("LStay"));
-            this.setLeft2(setupPlayer("LWalk2"));
-            this.setRight1(setupPlayer("RWalk1"));
-            this.setRightStay(setupPlayer("RStay"));
-            this.setRight2(setupPlayer("RWalk2"));
+            this.setDown1(setup("/Player/FWalk1"));
+            this.setDownStay(setup("/Player/FStay"));
+            this.setDown2(setup("/Player/FWalk2"));
+            this.setUp1(setup("/Player/BWalk1"));
+            this.setUpStay(setup("/Player/BStay"));
+            this.setUp2(setup("/Player/BWalk2"));
+            this.setLeft1(setup("/Player/LWalk1"));
+            this.setLeftStay(setup("/Player/LStay"));
+            this.setLeft2(setup("/Player/LWalk2"));
+            this.setRight1(setup("/Player/RWalk1"));
+            this.setRightStay(setup("/Player/RStay"));
+            this.setRight2(setup("/Player/RWalk2"));
 
 
     }
-    public BufferedImage setupPlayer(String imageName)  {
+    public BufferedImage setup(String imageName)  {
         UtilityTools utilityTools = new UtilityTools();
         InOut inOut = new InOut();
-        return utilityTools.scaleImage(inOut.setupPlayer(imageName), getGamePanel().getGameCFG().getTileSize(),getGamePanel().getGameCFG().getTileSize());
+        return utilityTools.scaleImage(inOut.setup(imageName), getGamePanel().getGameCFG().getTileSize(),getGamePanel().getGameCFG().getTileSize());
     }
     public void draw(Graphics2D graphics2D){
 

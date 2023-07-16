@@ -27,8 +27,8 @@ public class TileManager {
         for (int i = 0; i < tiles.length; i++) {
             tiles[i] = new Tile();
             if(i>=10){
-            tiles[i].setImage(inOut.setupTile("/Tiles/Outdoors_"+i+".png"));}
-            else tiles[i].setImage(inOut.setupTile("/Tiles/Outdoors_"+"0"+i+".png"));
+            tiles[i].setImage(inOut.setup("/Tiles/Outdoors_"+i));}
+            else tiles[i].setImage(inOut.setup("/Tiles/Outdoors_"+"0"+i));
         BufferedImage scaledImage = new BufferedImage(gamePanel.getGameCFG().getTileSize(),gamePanel.getGameCFG().getTileSize(),tiles[i].getImage().getType());
         Graphics2D graphics2D = scaledImage.createGraphics();
         graphics2D.drawImage(tiles[i].getImage(),0,0,gamePanel.getGameCFG().getTileSize(),gamePanel.getGameCFG().getTileSize(),null);

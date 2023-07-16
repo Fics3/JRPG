@@ -17,32 +17,33 @@ public class LevelEditorView extends JPanel {
     public LevelEditorView(LevelEditor levelEditor, TileManager tileManager){
         this.levelEditor = levelEditor;
         this.tileManager = tileManager;
+        screenX=levelEditor.getGameCFG().getScreenWight()/2-(levelEditor.getGameCFG().getTileSize()/2);
+        screenY=levelEditor.getGameCFG().getScreenHeight()/2-(levelEditor.getGameCFG().getTileSize()/2);
         tileManager.getTileImage();
     }
 
-    public void draw(Graphics2D graphics2D){
-        for (int i = 0; i < getLevelEditor().getCol(); i++) {
-            for (int j = 0; j < getLevelEditor().getRow(); j++) {
-                int worldX=i*getLevelEditor().getGameCFG().getTileSize();
-                int worldY=j*getLevelEditor().getGameCFG().getTileSize();
-//                if (worldY+getLevelEditor().getGameCFG().getTileSize() > getLevelEditor().getGameCFG().getPlayer().getY() - screenY &&
-//                        worldY-getLevelEditor().getGameCFG().getTileSize()< getLevelEditor().getGameCFG().getPlayer().getY() + screenY &&
-//                        worldX+getLevelEditor().getGameCFG().getTileSize() > getLevelEditor().getGameCFG().getPlayer().getX() - screenX &&
-//                        worldX -getLevelEditor().getGameCFG().getTileSize()< getLevelEditor().getGameCFG().getPlayer().getX() + screenX) {
-                    int screenXX = worldX - getLevelEditor().getGameCFG().getPlayer().getX() + screenX;
-                    int screenYY = worldY - getLevelEditor().getGameCFG().getPlayer().getY() + screenY;
-                    graphics2D.drawImage(tileManager.getTiles()[levelEditor.getMap()[i][j]].getImage(), worldX, worldY, null);
-               // }
+    public void draw(Graphics2D graphics2D) {
+        for (int i = 0; i < levelEditor.getCol(); i++) {
+            for (int j = 0; j < levelEditor.getRow(); j++) {
+                int worldX = i * levelEditor.getGameCFG().getTileSize();
+                int worldY = j * levelEditor.getGameCFG().getTileSize();
+                if (worldY + levelEditor.getGameCFG().getTileSize() > levelEditor.getCurRow()*levelEditor.getGameCFG().getTileSize() - screenY &&
+                        worldY - levelEditor.getGameCFG().getTileSize() < levelEditor.getCurRow()*levelEditor.getGameCFG().getTileSize() + screenY &&
+                        worldX + levelEditor.getGameCFG().getTileSize() > levelEditor.getCurCol()*levelEditor.getGameCFG().getTileSize() - screenX &&
+                        worldX - levelEditor.getGameCFG().getTileSize() < levelEditor.getCurCol()*levelEditor.getGameCFG().getTileSize() + screenX) {
+                    int screenXX = worldX-levelEditor.getCurCol()*levelEditor.getGameCFG().getTileSize()+screenX;
+                    int screenYY = worldY-levelEditor.getCurRow()*levelEditor.getGameCFG().getTileSize()+screenY;
+                    graphics2D.drawImage(tileManager.getTiles()[levelEditor.getTile(i, j)].getImage(), screenXX, screenYY, null);
+                }
             }
+        }
 
+    }
+        public LevelEditor getLevelEditor() {
+            return levelEditor;
+        }
+
+        public TileManager getTileManager() {
+            return tileManager;
         }
     }
-
-    public LevelEditor getLevelEditor() {
-        return levelEditor;
-    }
-
-    public TileManager getTileManager() {
-        return tileManager;
-    }
-}

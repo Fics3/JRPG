@@ -105,6 +105,20 @@ public class UI {
     public void drawLevelEditor(){
         if(gamePanel.getGameCFG().getKeyboardController().isEditor()){
             gamePanel.getLevelEditorView().draw(graphics2D);
+            final int slotStartX = 0;
+            final int slotStartY = 0;
+            int slotX = slotStartX;
+            int slotY = slotStartY;
+
+            int cursorX = slotStartX + (gamePanel.getGameCFG().getTileSize()*gamePanel.getLevelEditorView().getLevelEditor().getCurCol());
+            int cursorY = slotStartY + (gamePanel.getGameCFG().getTileSize()*gamePanel.getLevelEditorView().getLevelEditor().getCurRow());
+            int cursorWidth = gamePanel.getGameCFG().getTileSize();
+            int cursorHeight =  gamePanel.getGameCFG().getTileSize();
+
+            graphics2D.setColor(Color.white);
+            graphics2D.setStroke(new BasicStroke(3));
+            graphics2D.drawRoundRect(cursorX,cursorY,cursorWidth,cursorHeight,10,10);
+
         }
         else {
             graphics2D.setColor(new Color(0,0,0,255));

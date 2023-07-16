@@ -124,7 +124,6 @@ public class GameCFG {
             }
         else if(getGameState() == getLevelEditorState()){
             if(keyboardController.isEditor()){
-                getLevelEditor().setLevel("DaDAaaa");
             }
         }
         }

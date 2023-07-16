@@ -1,12 +1,14 @@
 package org.example.Model.Main;
 
 
+import java.util.Arrays;
+
 public class LevelEditor {
     GameCFG gameCFG;
     private String name;
     private int[][] map;
     private int[][] dataMap;
-    private int curTile= 0;
+    private int curTile= 5;
     private int[] objects;
     private int curObj;
     private int col = 0;
@@ -30,6 +32,8 @@ public class LevelEditor {
     }
     public void placeTile(){
         map[curCol][curRow] = curTile;
+        System.out.println(map[curCol][curRow]);
+//        System.out.println(Arrays.deepToString(map));
     }
     public void setCollision(){
         dataMap[curCol][curRow] = 1;
@@ -37,6 +41,9 @@ public class LevelEditor {
 
     public int[][] getMap() {
         return map;
+    }
+    public int getTile(int i, int j){
+        return map[i][j];
     }
     public GameCFG getGameCFG() {
         return gameCFG;
@@ -56,5 +63,29 @@ public class LevelEditor {
 
     public int getCol() {
         return col;
+    }
+
+    public int getCurCol() {
+        return curCol;
+    }
+
+    public int getCurRow() {
+        return curRow;
+    }
+
+    public void setCurCol(int curCol) {
+        this.curCol = curCol;
+    }
+
+    public void setCurRow(int curRow) {
+        this.curRow = curRow;
+    }
+
+    public int getCurTile() {
+        return curTile;
+    }
+
+    public void setCurTile(int curTile) {
+        this.curTile = curTile;
     }
 }
