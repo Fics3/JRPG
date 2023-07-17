@@ -6,17 +6,17 @@ import org.example.Model.Entity.Enemies.Enemy_Goblin;
 import org.example.Model.Entity.Enemies.Enemy_GreenBoy;
 import org.example.Model.Entity.Enemies.Enemy_Orc;
 import org.example.Model.Entity.Entity;
-import org.example.Model.Entity.NPC.NPC_GreenBoy;
 import org.example.Model.Object.*;
 import org.example.Model.Object.Armor.*;
 import org.example.Model.Object.Consumable.OBJ_healthPotion;
 import org.example.Model.Object.Consumable.OBJ_manaPotion;
 import org.example.Model.Object.OBJ_chest;
-import org.example.Model.Object.Object;
+import org.example.Model.Object.ObjectModel;
 import org.example.Model.Object.Weapon.OBJ_ironSword;
 import org.example.Model.Object.Weapon.OBJ_legendarySword;
 import org.example.Model.Object.Weapon.OBJ_woodSword;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 public class AssetsSetter {
@@ -26,24 +26,23 @@ public class AssetsSetter {
 
     public AssetsSetter(GameCFG gameCFG){
         this.gameCFG=gameCFG;
-        mapColData = new int[gameCFG.getMaxWorldCol()][gameCFG.getMaxWorldRow()];
-        InOut inOut = new InOut();
-        mapColData = inOut.getDataMap(gameCFG);
+//        mapColData=gameCFG.getCollisionChecker().getMapColData();
     }
 
 
     public void setObject() {
+        mapColData = gameCFG.getDataMap();
         for (int i = 0; i < gameCFG.getMaxWorldCol(); i++) {
             for (int j = 0; j < gameCFG.getMaxWorldRow(); j++) {
                 int id = mapColData[i][j];
                 if(id>1 && id < 18){
-                    Object object = chooseObj(id);
-                    if(object!=null) {
-                        object.setX(i * gameCFG.getTileSize());
-                        object.setY(j * gameCFG.getTileSize());
-                        object.setSolidAreaDefault(i * gameCFG.getTileSize(), j * gameCFG.getTileSize());
-                        object.setId(gameCFG.getObjects().size());
-                        gameCFG.setObject(object);
+                    ObjectModel objectModel = chooseObj(id);
+                    if(objectModel !=null) {
+                        objectModel.setX(i * gameCFG.getTileSize());
+                        objectModel.setY(j * gameCFG.getTileSize());
+                        objectModel.setSolidAreaDefault(i * gameCFG.getTileSize(), j * gameCFG.getTileSize());
+                        objectModel.setId(gameCFG.getObjects().size());
+                        gameCFG.setObject(objectModel);
                     }
                 }
                 if(id>=18){
@@ -61,13 +60,7 @@ public class AssetsSetter {
         }
     }
 
-//    public void setNpc()  {
-//        gameCFG.setNpcs(new NPC_GreenBoy(gameCFG,gameCFG.getMaxWorldWight()/2,gameCFG.getMaxWorldHeight()/2+ gameCFG.getTileSize()*2,5));
-//    }
-//    public void setEnemy() {
-//        gameCFG.setNpcs(new Enemy_Orc(gameCFG,gameCFG.getMaxWorldWight()/2+gameCFG.getTileSize(),gameCFG.getMaxWorldHeight()/2+ gameCFG.getTileSize()*4,4));
-//    }
-    public Object chooseObj(int id){
+    public ObjectModel chooseObj(int id){
         if(id == 2){
             return new OBJ_chest(gameCFG);
         }
@@ -130,11 +123,11 @@ public class AssetsSetter {
             return new Enemy_Orc(gameCFG);
         }
         if(id == 21){
-            return new Enemy_Ghost(gameCFG);
+            return new Enemy_GreenBoy(gameCFG);
         }
         return null;
     }
-    public Object chooseObjName(String name) {
+    public ObjectModel chooseObjName(String name) {
         if(Objects.equals(name, "chest")){
             return new OBJ_chest(gameCFG);
         }
@@ -186,5 +179,24 @@ public class AssetsSetter {
 
 
         return null;
+    }
+    public Entity chooseEntityName(String name){
+        if(Objects.equals(name, "Ghost")){
+            return new Enemy_Ghost(gameCFG);
+        }
+        if(Objects.equals(name, "Goblin")){
+            return new Enemy_Goblin(gameCFG);
+        }
+        if(Objects.equals(name, "Orc")){
+            return new Enemy_Orc(gameCFG);
+        }
+        if(Objects.equals(name, "GreenBoy")){
+            return new Enemy_GreenBoy(gameCFG);
+        }
+        return null;
+    }
+
+    public void setMapColData(int[][] mapColData) {
+        this.mapColData = mapColData;
     }
 }

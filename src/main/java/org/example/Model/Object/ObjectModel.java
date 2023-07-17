@@ -5,7 +5,7 @@ import org.example.Model.Main.GameCFG;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
-public class Object {
+public class ObjectModel {
     private int id;
     private int X,Y;
     private boolean collision;
@@ -22,7 +22,7 @@ public class Object {
     private boolean chestplate = false;
     private boolean boots = false;
 
-    public Object(GameCFG gameCFG) {
+    public ObjectModel(GameCFG gameCFG) {
         this.gameCFG = gameCFG;
     }
     public void consume(){

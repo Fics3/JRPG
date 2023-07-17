@@ -12,4 +12,9 @@ public class UtilityTools {
         return scaledImage;
     }
 
+    public void chooseObjView(){
+
+
+    }
+
 }

@@ -7,7 +7,7 @@ import org.example.Model.PathFinder;
 public class Enemy_Goblin extends Entity {
     public Enemy_Goblin(GameCFG gameCFG) {
         super(gameCFG);
-        setPathFinder(new PathFinder(gameCFG));
+        gameCFG.setPathFinder(new PathFinder(gameCFG));
         setEnemy(true);
         setMaxHP(30);
         setBaseHP(getMaxHP());

@@ -2,7 +2,7 @@ package org.example.Model.Main;
 
 import org.example.IO.InOut;
 import org.example.Model.Entity.Entity;
-import org.example.Model.Object.Object;
+import org.example.Model.Object.ObjectModel;
 
 import java.util.ArrayList;
 
@@ -13,11 +13,9 @@ public class CollisionChecker {
 
 
     public CollisionChecker(GameCFG gameCFG, Entity entity) {
-        InOut inOut = new InOut();
         this.entity = entity;
         this.gameCFG = gameCFG;
-        mapColData = new int[gameCFG.getMaxWorldCol()][gameCFG.getMaxWorldRow()];
-        mapColData = inOut.getDataMap(gameCFG);
+        mapColData = gameCFG.getDataMap();
     }
 
     public void checkTile(Entity entity) {
@@ -39,39 +37,40 @@ public class CollisionChecker {
                 tileN2 = getMapColData(entityRightCol, entityTopRow);
                 if (tileN1 == 1 && tileN2 == 1) {
                     entity.setCollisionOn(true);
+                    System.out.println("UP");
                 }
-                break;
             case "down":
                 entityBotRow = (entityBotY + entity.getSpeed()) / gameCFG.getTileSize();
                 tileN1 = getMapColData(entityLeftCol, entityBotRow);
                 tileN2 = getMapColData(entityRightCol, entityBotRow);
                 if (tileN1 == 1 && tileN2 == 1) {
                     entity.setCollisionOn(true);
+                    System.out.println("DOWN");
+
                 }
-                break;
             case "right":
                 entityRightCol = (entityRightX + entity.getSpeed()) / gameCFG.getTileSize();
                 tileN1 = getMapColData(entityRightCol, entityTopRow);
                 tileN2 = getMapColData(entityRightCol, entityBotRow);
                 if (tileN1 == 1 && tileN2 == 1) {
                     entity.setCollisionOn(true);
+                    System.out.println("RIGHT");
+
                 }
-                break;
             case "left":
                 entityLeftCol = (entityLeftX - entity.getSpeed()) / gameCFG.getTileSize();
                 tileN1 = getMapColData(entityLeftCol, entityTopRow);
                 tileN2 = getMapColData(entityLeftCol, entityBotRow);
                 if (tileN1 == 1 && tileN2 == 1) {
-                    System.out.println(2);
+                    System.out.println("LEFT");
                     entity.setCollisionOn(true);
                 }
-                break;
 
         }
     }
 
     public Integer checkObject(Entity entity, boolean player) {
-        for (Object obj : gameCFG.getObjects()) {
+        for (ObjectModel obj : gameCFG.getObjects()) {
             if (obj != null) {
                 entity.setSolidArea(entity.getX() + entity.getSolidArea().x, entity.getY() + entity.getSolidArea().y);
                 obj.setSolidArea(obj.getX(), obj.getY());
@@ -97,19 +96,17 @@ public class CollisionChecker {
                         }
                         break;
                     case "down":
-                        entity.setSolidY(entity.getSolidArea().y += entity.getSpeed() / 2);
+                        entity.setSolidY(entity.getSolidArea().y += entity.getSpeed()/2);
                         if (entity.getSolidArea().intersects(obj.getSolidArea())) {
                             if (obj.isCollision()) {
                                 entity.setCollisionOn(true);
                                 entity.setSolidArea(entity.getSolidDefaultX(), entity.getSolidDefaultY());
-                                assert obj != null;
                                 obj.setSolidArea(obj.getSolidAreaDefaultX(), obj.getSolidAreaDefaultY());
                                 return obj.getId();
                             }
                             else {
                                 if(player){
                                     entity.setSolidArea(entity.getSolidDefaultX(), entity.getSolidDefaultY());
-                                    assert obj != null;
                                     obj.setSolidArea(obj.getSolidAreaDefaultX(), obj.getSolidAreaDefaultY());
                                     return obj.getId();
                                 }
@@ -122,14 +119,12 @@ public class CollisionChecker {
                             if (obj.isCollision()) {
                                 entity.setCollisionOn(true);
                                 entity.setSolidArea(entity.getSolidDefaultX(), entity.getSolidDefaultY());
-                                assert obj != null;
                                 obj.setSolidArea(obj.getSolidAreaDefaultX(), obj.getSolidAreaDefaultY());
                                 return obj.getId();
                             }
                             else {
                                 if(player){
                                     entity.setSolidArea(entity.getSolidDefaultX(), entity.getSolidDefaultY());
-                                    assert obj != null;
                                     obj.setSolidArea(obj.getSolidAreaDefaultX(), obj.getSolidAreaDefaultY());
                                     return obj.getId();
 
@@ -252,6 +247,14 @@ public class CollisionChecker {
     }
     public int getMapColData(int col,int row) {
         return mapColData[col][row];
+    }
+
+    public void setMapColData(int[][] mapColData) {
+        this.mapColData = mapColData;
+    }
+
+    public int[][] getMapColData() {
+        return mapColData;
     }
 }
 

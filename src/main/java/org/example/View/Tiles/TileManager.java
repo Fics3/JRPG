@@ -10,15 +10,13 @@ import java.awt.image.BufferedImage;
 public class TileManager {
 
     private Tile[] tiles;
-    private int[][] mapDataNum;
     GamePanel gamePanel;
 
     public TileManager(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
         InOut inOut = new InOut();
-        tiles=new Tile[102];
-        mapDataNum = new int[gamePanel.getGameCFG().getMaxWorldCol()][gamePanel.getGameCFG().getMaxWorldRow()];
-        mapDataNum=inOut.loadMap("/Maps/map_03.txt",gamePanel);
+        tiles=new Tile[104];
+
         getTileImage();
 
     }
@@ -46,7 +44,9 @@ public class TileManager {
                         worldX -gamePanel.getGameCFG().getTileSize()< gamePanel.getGameCFG().getPlayer().getX() + gamePanel.getPlayerView().getScreenX()) {
                     int screenX = worldX - gamePanel.getGameCFG().getPlayer().getX() + gamePanel.getPlayerView().getScreenX();
                     int screenY = worldY - gamePanel.getGameCFG().getPlayer().getY() + gamePanel.getPlayerView().getScreenY();
-                    graphics2D.drawImage(tiles[mapDataNum[i][j]].getImage(), screenX, screenY, null);
+                    if(gamePanel.getGameCFG().getMapDataNum()!=null) {
+                        graphics2D.drawImage(tiles[gamePanel.getGameCFG().getMapDataNum()[i][j]].getImage(), screenX, screenY, null);
+                    }
                 }
             }
             

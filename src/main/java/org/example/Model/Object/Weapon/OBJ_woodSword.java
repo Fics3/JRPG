@@ -1,9 +1,9 @@
 package org.example.Model.Object.Weapon;
 
 import org.example.Model.Main.GameCFG;
-import org.example.Model.Object.Object;
+import org.example.Model.Object.ObjectModel;
 
-public class OBJ_woodSword extends Object {
+public class OBJ_woodSword extends ObjectModel {
     private int damage;
     public OBJ_woodSword(GameCFG gameCFG) {
         super(gameCFG);

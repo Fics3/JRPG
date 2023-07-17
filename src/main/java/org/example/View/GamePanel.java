@@ -4,13 +4,14 @@ import org.example.Model.Entity.Entity;
 import org.example.View.EntityView.EntityView;
 import org.example.View.EntityView.PlayerView;
 import org.example.Model.Main.GameCFG;
-import org.example.Model.Object.Object;
+import org.example.Model.Object.ObjectModel;
 import org.example.View.Tiles.TileManager;
 import org.example.View.UI.UI;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class GamePanel extends JPanel implements Runnable {
 
@@ -30,11 +31,10 @@ public class GamePanel extends JPanel implements Runnable {
     Thread gameThread;
     public GamePanel(){
         tileManager = new TileManager(this);
-        levelEditorView = new LevelEditorView(gameCFG.getLevelEditor(),tileManager);
         ui =new UI(this);
         this.addKeyListener(gameCFG.getKeyboardController());
         this.setPreferredSize(new Dimension(gameCFG.getScreenWight(),gameCFG.getScreenHeight()));
-        this.setBackground(Color.black);
+        this.setBackground(new Color(99,155,255));
         this.setDoubleBuffered(true);
         this.setFocusable(true);
     }
@@ -43,15 +43,15 @@ public class GamePanel extends JPanel implements Runnable {
         gameThread.start();
     }
     public void setupGame(){
-        tileManager = new TileManager(this);
+        levelEditorView = new LevelEditorView(gameCFG.getLevelEditor(),this);
         entityViews.clear();
         for (Entity npc : gameCFG.getNpcs()) {
             entityView = new EntityView(this,npc);
             entityViews.add(entityView);
         }
         objectViews.clear();
-        for (Object object: gameCFG.getObjects()) {
-            objectView = new ObjectView(this,object);
+        for (ObjectModel objectModel : gameCFG.getObjects()) {
+            objectView = new ObjectView(this, objectModel);
             objectViews.add(objectView);
         }
     }
@@ -91,7 +91,7 @@ public class GamePanel extends JPanel implements Runnable {
         }
         if( gameCFG.getGameState() == gameCFG.getLoadObjects()) {
             objectViews.clear();
-            for (Object obj : gameCFG.getObjects()) {
+            for (ObjectModel obj : gameCFG.getObjects()) {
                 objectView = new ObjectView(this, obj);
                 objectViews.add(objectView);
             }
@@ -99,11 +99,15 @@ public class GamePanel extends JPanel implements Runnable {
         }
         if( gameCFG.getGameState() == gameCFG.getLoadInventory()) {
             playerView.getInventory().clear();
-            for (Object object : gameCFG.getPlayer().getInventory()) {
-                objectView = new ObjectView(this, object);
+            for (ObjectModel objectModel : gameCFG.getPlayer().getInventory()) {
+                objectView = new ObjectView(this, objectModel);
                 playerView.getInventory().add(objectView);
             }
             getGameCFG().setGameState(getGameCFG().getStatState());
+        }
+        if( gameCFG.getKeyboardController().isLoadObj()){
+            levelEditorView.getObjects();
+            gameCFG.getKeyboardController().setLoadObj(false);
         }
     }
 
@@ -160,7 +164,7 @@ public class GamePanel extends JPanel implements Runnable {
     }
     public EntityView getEntityView (String name){
         for (EntityView npc : entityViews) {
-            if(npc.getName()==name){
+            if(Objects.equals(npc.getName(), name)){
                 return npc;
             }
         }
@@ -169,6 +173,10 @@ public class GamePanel extends JPanel implements Runnable {
 
     public LevelEditorView getLevelEditorView() {
         return levelEditorView;
+    }
+
+    public TileManager getTileManager() {
+        return tileManager;
     }
 
     public void setLevelEditorView(LevelEditorView levelEditorView) {

@@ -1,9 +1,9 @@
 package org.example.Model.Object.Armor;
 
 import org.example.Model.Main.GameCFG;
-import org.example.Model.Object.Object;
+import org.example.Model.Object.ObjectModel;
 
-public class OBJ_leatherHelmet extends Object {
+public class OBJ_leatherHelmet extends ObjectModel {
     private int gainHP;
     public OBJ_leatherHelmet(GameCFG gameCFG) {
         super(gameCFG);

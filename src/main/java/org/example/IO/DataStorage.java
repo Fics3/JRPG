@@ -22,6 +22,12 @@ public class DataStorage implements Serializable {
     private ArrayList<String> inventory = new ArrayList<>();
     private int inventoryCapacity;
     private Multimap<String,Integer[]> objects = ArrayListMultimap.create();
+    private Multimap<String,Integer[]> entities = ArrayListMultimap.create();
+
+    private int maxWorldCol;
+    private int maxWorldRow;
+    private int[][] map;
+    private int[][] dataMap;
 
     public void setDamage(int damage) {
         this.damage = damage;
@@ -133,5 +139,45 @@ public class DataStorage implements Serializable {
 
     public void setObjects(Multimap<String, Integer[]> objects) {
         this.objects = objects;
+    }
+
+    public int[][] getDataMap() {
+        return dataMap;
+    }
+
+    public void setDataMap(int[][] dataMap) {
+        this.dataMap = dataMap;
+    }
+
+    public Multimap<String, Integer[]> getEntities() {
+        return entities;
+    }
+
+    public void setEntities(Multimap<String, Integer[]> entities) {
+        this.entities = entities;
+    }
+
+    public int[][] getMap() {
+        return map;
+    }
+
+    public void setMap(int[][] map) {
+        this.map = map;
+    }
+
+    public int getMaxWorldRow() {
+        return maxWorldRow;
+    }
+
+    public void setMaxWorldRow(int maxWorldRow) {
+        this.maxWorldRow = maxWorldRow;
+    }
+
+    public int getMaxWorldCol() {
+        return maxWorldCol;
+    }
+
+    public void setMaxWorldCol(int maxWorldCol) {
+        this.maxWorldCol = maxWorldCol;
     }
 }

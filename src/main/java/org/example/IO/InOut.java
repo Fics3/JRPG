@@ -40,18 +40,18 @@ public class InOut {
         }
         return mapColData;
     }
-    public int[][] loadMap(String filepath, GamePanel gamePanel){
-        int [][] mapDataNum = new int[gamePanel.getGameCFG().getMaxWorldCol()][gamePanel.getGameCFG().getMaxWorldRow()];
+    public int[][] loadMap(String filepath, GameCFG gameCFG){
+        int [][] mapDataNum = new int[gameCFG.getMaxWorldCol()][gameCFG.getMaxWorldRow()];
         InputStream inputStream = getClass().getResourceAsStream(filepath);
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream)));
-            for (int i = 0; i < gamePanel.getGameCFG().getMaxWorldRow(); i++) {
+            for (int i = 0; i < gameCFG.getMaxWorldRow(); i++) {
                 String line = null;
                 try {
                     line = bufferedReader.readLine();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-                for (int j = 0; j < gamePanel.getGameCFG().getMaxWorldCol(); j++) {
+                for (int j = 0; j < gameCFG.getMaxWorldCol(); j++) {
                     String[] data = line.split(" ");
                     mapDataNum[j][i]=Integer.parseInt(data[j]);
                 }

@@ -16,7 +16,7 @@ public class Entity {
     private int HP;
     private int lvl;
     private String direction;
-    private Rectangle solidArea= new Rectangle(0, 0 ,24,16);
+    private Rectangle solidArea= new Rectangle(8, 12 ,24,16);
     private int solidDefaultX, solidDefaultY;
     private boolean collisionOn = false;
     private final GameCFG gameCFG;
@@ -30,7 +30,6 @@ public class Entity {
     private int spriteNum=2;
     private int spriteCycle = 0;
     private int actionLockCounter = 0;
-    private PathFinder pathFinder;
     private int baseHP = 10;
     private int defaultX;
     private int defaultY;
@@ -77,6 +76,22 @@ public class Entity {
         currentDialogue = dialogues.get(0);
     }
     public void update(){
+        int newX = getX();
+        int newY = getY();
+        if (newX < 0) {
+            newX = 0;
+        } else if (newX > (getGameCFG().getMaxWorldCol()-1) * getGameCFG().getTileSize() - 16) {
+            newX = (getGameCFG().getMaxWorldCol() - 1) * getGameCFG().getTileSize() - 16;
+        }
+
+        if (newY < 0) {
+            newY = 0;
+        } else if (newY > (getGameCFG().getMaxWorldRow() - 1) * getGameCFG().getTileSize() - 16) {
+            newY = (getGameCFG().getMaxWorldRow() - 1) * getGameCFG().getTileSize() - 16;
+        }
+        setX(newX);
+        setY(newY);
+
         setAction();
         if(isEnemy) {runToPlayer();}
 //        if(isCollisionOn()){
@@ -88,18 +103,29 @@ public class Entity {
 //            }
 //        }
         if(!isCollisionOn()){
+//            int newX = getX();
+//            int newY = getY();
             switch (getDirection()){
                 case "up":setY(getY()-getSpeed()); break;
                 case "down":setY(getY()+getSpeed()); break;
                 case "right":setX(getX()+getSpeed()); break;
                 case "left":setX(getX()-getSpeed()); break;
             }
+//            int mapWidth = gameCFG.getMaxWorldCol() * gameCFG.getTileSize() - gameCFG.getTileSize();
+//            int mapHeight = gameCFG.getMaxWorldRow() *gameCFG.getTileSize() - gameCFG.getTileSize();
+//
+//            if (newX >= 0 && newX + gameCFG.getTileSize() <= mapWidth) {
+//                setX(newX);
+//            }
+//            if (newY >= 0 && newY + gameCFG.getTileSize() <= mapHeight) {
+//                setY(newY);
+//            }
         }
         setCollisionOn(false);
 
         gameCFG.getCollisionChecker().checkTile(this);
         gameCFG.getCollisionChecker().checkObject(this,false);
-        boolean tmp =  gameCFG.getCollisionChecker().checkPlayer(this);
+        boolean tmp = gameCFG.getCollisionChecker().checkPlayer(this);
         if(tmp){
             try {
                 if(this.isEnemy)gameCFG.getPlayer().interactEnemy(this.getId());
@@ -107,7 +133,6 @@ public class Entity {
                 throw new RuntimeException(e);
             }
         }
-
         spriteCycle++;
         if (spriteCycle > 15) {
             if (getSpriteNum() == 1) setSpriteNum(2);
@@ -115,6 +140,7 @@ public class Entity {
             else if (getSpriteNum() == 3) setSpriteNum(1);
             spriteCycle = 0;
         }
+        System.out.println(collisionOn);
     }
 
     public void runToPlayer() {
@@ -172,11 +198,11 @@ public class Entity {
         int startCol = (x + solidArea.x)/gameCFG.getTileSize();
         int startRow = (y + solidArea.y)/gameCFG.getTileSize();
 
-        pathFinder.setNode(startCol,startRow,goalCol,goalRow);
+        getGameCFG().getPathFinder().setNode(startCol,startRow,goalCol,goalRow);
 
-        if(pathFinder.search()){
-            int nextX = pathFinder.getPathList().get(0).getCol()*gameCFG.getTileSize();
-            int nextY = pathFinder.getPathList().get(0).getRow()*gameCFG.getTileSize();
+        if(getGameCFG().getPathFinder().search()){
+            int nextX = getGameCFG().getPathFinder().getPathList().get(0).getCol()*gameCFG.getTileSize();
+            int nextY = getGameCFG().getPathFinder().getPathList().get(0).getRow()*gameCFG.getTileSize();
 
             int enLeftX = x + solidArea.x;
             int enRightX = x+solidArea.x +solidArea.width;
@@ -221,8 +247,8 @@ public class Entity {
                     direction = "left";
                 }
             }
-            int nextCol = pathFinder.getPathList().get(0).getCol();
-            int nextRow = pathFinder.getPathList().get(0).getRow();
+            int nextCol = getGameCFG().getPathFinder().getPathList().get(0).getCol();
+            int nextRow = getGameCFG().getPathFinder().getPathList().get(0).getRow();
 
         }
 
@@ -448,15 +474,6 @@ public class Entity {
     public int getSpriteCycle() {
         return spriteCycle;
     }
-
-    public PathFinder getPathFinder() {
-        return pathFinder;
-    }
-
-    public void setPathFinder(PathFinder pathFinder) {
-        this.pathFinder = pathFinder;
-    }
-
 
     public int getBaseHP() {
         return baseHP;

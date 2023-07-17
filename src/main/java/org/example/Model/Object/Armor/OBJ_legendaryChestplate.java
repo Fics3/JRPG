@@ -1,9 +1,9 @@
 package org.example.Model.Object.Armor;
 
 import org.example.Model.Main.GameCFG;
-import org.example.Model.Object.Object;
+import org.example.Model.Object.ObjectModel;
 
-public class OBJ_legendaryChestplate extends Object {
+public class OBJ_legendaryChestplate extends ObjectModel {
     private int gainHP;
     public OBJ_legendaryChestplate(GameCFG gameCFG) {
         super(gameCFG);

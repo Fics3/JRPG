@@ -6,7 +6,7 @@ import org.example.Model.Main.GameCFG;
 
 import java.util.Random;
 
-public class OBJ_dungeon extends Object{
+public class OBJ_dungeon extends ObjectModel {
     public OBJ_dungeon(GameCFG gameCFG) {
         super(gameCFG);
         setCollision(true);
@@ -20,14 +20,6 @@ public class OBJ_dungeon extends Object{
         enemy.setX(getX());
         enemy.setY(getY());
         getGameCFG().setNpcs(enemy);
-//        setId(getGameCFG().getNpcs().size());
-//        getGameCFG().setNpcs(enemy);
-//        getGameCFG().setGameState(getGameCFG().getLoadEntity());
-//        System.out.println(enemy);
-//        try {
-//            getGameCFG().getPlayer().interactEnemy(enemy);
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
+        getGameCFG().setGameState(getGameCFG().getLoadEntity());
     }
 }

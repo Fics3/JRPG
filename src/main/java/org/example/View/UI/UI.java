@@ -1,24 +1,32 @@
 package org.example.View.UI;
 
 
+import org.example.Model.Entity.Entity;
 import org.example.Model.Object.Consumable.OBJ_healthPotion;
 import org.example.Model.Object.Consumable.OBJ_manaPotion;
+import org.example.Model.Object.ObjectModel;
+import org.example.View.EntityView.EntityView;
 import org.example.View.GamePanel;
 import org.example.View.LevelEditorView;
 import org.example.View.ObjectView;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 
 public class UI {
     private Graphics2D graphics2D;
-    private Font arial_40;
-    private GamePanel gamePanel;
+    private final Font arial_40;
+    private final GamePanel gamePanel;
     private int slotCol;
     private int slotRow;
+
+    private int visible = 0;
+    private final ArrayList<EntityView> entityViews = new ArrayList<>();
+    private final ArrayList<ObjectView> objectViews = new ArrayList<>();
+
+
     public UI(GamePanel gamePanel){
-        slotCol = gamePanel.getGameCFG().getPlayer().getInventorySlot();
-        slotRow = gamePanel.getGameCFG().getPlayer().getInventorySlot()/5;
         this.gamePanel=gamePanel;
         arial_40 = new Font("Comic Sans MS",Font.PLAIN,40);
 
@@ -28,7 +36,6 @@ public class UI {
         this.graphics2D=graphics2D;
         graphics2D.setFont(arial_40);
         graphics2D.setColor(Color.white);
-//        drawPath();
         if(gamePanel.getGameCFG().getGameState()==gamePanel.getGameCFG().getTitleState()){
             drawTitleScreen();
         }
@@ -53,6 +60,12 @@ public class UI {
         }
         else if( gamePanel.getGameCFG().getGameState() == gamePanel.getGameCFG().getLevelEditorState()){
             drawLevelEditor();
+            for (ObjectView objectView : objectViews) {
+                objectView.drawObjEditor(graphics2D);
+            }
+            for (EntityView entityView: entityViews) {
+                entityView.drawEntityEditor(graphics2D);
+            }
         }
     }
     public void drawTitleScreen(){
@@ -94,31 +107,103 @@ public class UI {
         if(gamePanel.getGameCFG().getKeyboardController().getCommandNum() == 3){
             drawCursor(textX,textY);
         }
-        txt = "Exit";
+        txt = "New Game at Custom Level";
         textX = getForCenterText(txt);
         textY +=gamePanel.getGameCFG().getTileSize()/2;
         graphics2D.drawString(txt,textX,textY);
         if(gamePanel.getGameCFG().getKeyboardController().getCommandNum() == 4){
             drawCursor(textX,textY);
         }
+        txt = "Load Custom Level ";
+        textX = getForCenterText(txt);
+        textY +=gamePanel.getGameCFG().getTileSize()/2;
+        graphics2D.drawString(txt,textX,textY);
+        if(gamePanel.getGameCFG().getKeyboardController().getCommandNum() == 5){
+            drawCursor(textX,textY);
+        }
+        txt = "Exit";
+        textX = getForCenterText(txt);
+        textY +=gamePanel.getGameCFG().getTileSize()/2;
+        graphics2D.drawString(txt,textX,textY);
+        if(gamePanel.getGameCFG().getKeyboardController().getCommandNum() == 6){
+            drawCursor(textX,textY);
+        }
     }
     public void drawLevelEditor(){
         if(gamePanel.getGameCFG().getKeyboardController().isEditor()){
             gamePanel.getLevelEditorView().draw(graphics2D);
-            final int slotStartX = 0;
-            final int slotStartY = 0;
-            int slotX = slotStartX;
-            int slotY = slotStartY;
-
-            int cursorX = slotStartX + (gamePanel.getGameCFG().getTileSize()*gamePanel.getLevelEditorView().getLevelEditor().getCurCol());
-            int cursorY = slotStartY + (gamePanel.getGameCFG().getTileSize()*gamePanel.getLevelEditorView().getLevelEditor().getCurRow());
+//            final int slotStartX = gamePanel.getLevelEditorView().getScreenX();
+//            final int slotStartY = gamePanel.getLevelEditorView().getScreenY();
+//
+//            int cursorX = slotStartX;
+//            int cursorY = slotStartY;
             int cursorWidth = gamePanel.getGameCFG().getTileSize();
             int cursorHeight =  gamePanel.getGameCFG().getTileSize();
+            if(gamePanel.getLevelEditorView().getLevelEditor().getDataMap()[gamePanel.getLevelEditorView().getLevelEditor().getCurCol()][gamePanel.getLevelEditorView().getLevelEditor().getCurRow()]>0){
+                graphics2D.setColor(Color.red);
+            }
+            else {
+                graphics2D.setColor(Color.white);
+            }
+            graphics2D.setStroke(new BasicStroke(3));
+            graphics2D.drawRoundRect(gamePanel.getLevelEditorView().getScreenX(),gamePanel.getLevelEditorView().getScreenY(),cursorWidth,cursorHeight,10,10);
 
+            int frameX = gamePanel.getGameCFG().getScreenWight()-gamePanel.getLevelEditorView().getScreenX();
+            int frameY = 0;
+
+            drawSubWindow(frameX,frameY,gamePanel.getGameCFG().getScreenWight()-gamePanel.getLevelEditorView().getScreenX(),gamePanel.getGameCFG().getScreenHeight());
+            final int slotStartX = frameX+25;
+            final int slotStartY = frameY+15;
+            int slotX = slotStartX;
+            int slotY = slotStartY;
+            if(gamePanel.getGameCFG().getKeyboardController().isObjects()) {
+                for (int i = 2; i <= 21; i++) {
+                    if (i <= 17) {
+                        graphics2D.drawImage(gamePanel.getLevelEditorView().getObjectViews().get(i-2).getImage(), slotX, slotY, null);
+                    }
+                    else graphics2D.drawImage(gamePanel.getLevelEditorView().getEntityViews().get(i-18).getDown1(), slotX, slotY, null);
+                    slotX += gamePanel.getGameCFG().getTileSize();
+                    if (slotX - gamePanel.getGameCFG().getTileSize() * 4 == slotStartX) {
+                        slotX = slotStartX;
+                        slotY += gamePanel.getGameCFG().getTileSize();
+                    }
+                }
+            }
+            else {
+                for (int i = 0; i < 44; i++) {
+                    graphics2D.drawImage(gamePanel.getTileManager().getTile(i + visible).getImage(), slotX, slotY, null);
+                    slotX += gamePanel.getGameCFG().getTileSize();
+                    if (slotX - gamePanel.getGameCFG().getTileSize() * 4 == slotStartX) {
+                        slotX = slotStartX;
+                        slotY += gamePanel.getGameCFG().getTileSize();
+                    }
+                }
+            }
+            if(gamePanel.getGameCFG().getKeyboardController().isPlaceObj()) loadViews();
+            int cursorX=slotStartX;
+            int cursorY=slotStartY;
+            if(!gamePanel.getGameCFG().getKeyboardController().isObjects()) {
+                cursorX = slotStartX + (((gamePanel.getLevelEditorView().getLevelEditor().getCurTile()) - visible) % 4 * gamePanel.getGameCFG().getTileSize());
+                cursorY = slotStartY + ((gamePanel.getLevelEditorView().getLevelEditor().getCurTile() - visible) / 4 * gamePanel.getGameCFG().getTileSize());
+            }
+            else {
+                cursorX = slotStartX + ((gamePanel.getLevelEditorView().getLevelEditor().getCurObj()-2) % 4 * gamePanel.getGameCFG().getTileSize());
+                cursorY = slotStartY + ((gamePanel.getLevelEditorView().getLevelEditor().getCurObj()-2) / 4 * gamePanel.getGameCFG().getTileSize());
+            }
+            if(gamePanel.getLevelEditorView().getLevelEditor().getCurTile()-visible>=40 && visible<60){
+                visible+=4;
+            }
+            if(gamePanel.getLevelEditorView().getLevelEditor().getCurTile()-visible<40 && visible>0){
+                visible-=4;
+            }
             graphics2D.setColor(Color.white);
             graphics2D.setStroke(new BasicStroke(3));
             graphics2D.drawRoundRect(cursorX,cursorY,cursorWidth,cursorHeight,10,10);
 
+//            if(gamePanel.getLevelEditorView().getLevelEditor().getCurTile()-visible>=44 && visible<60){
+//                visible+=4;
+//                cursorX-=gamePanel.getLevelEditorView().getLevelEditor().getCurTile()%4*gamePanel.getGameCFG().getTileSize();
+//            }
         }
         else {
             graphics2D.setColor(new Color(0,0,0,255));
@@ -141,7 +226,7 @@ public class UI {
             txt = "Press Enter to continue";
             txtX = getForCenterText(txt);
             txtY += gamePanel.getGameCFG().getTileSize()*2;
-            if(gamePanel.getGameCFG().getLevelEditor().getRow()>0 && gamePanel.getGameCFG().getLevelEditor().getCol()>0) {
+            if(gamePanel.getGameCFG().getLevelEditor().getRow()>1 && gamePanel.getGameCFG().getLevelEditor().getCol()>1) {
                 graphics2D.drawString(txt, txtX, txtY);
             }
         }
@@ -228,7 +313,7 @@ public class UI {
 
         x+=gamePanel.getGameCFG().getTileSize();
         y+=gamePanel.getGameCFG().getTileSize();
-        String tmp = new String("Бро это ключевое событие");
+        String tmp = "Бро это ключевое событие";
         graphics2D.drawString(tmp,x,y);
     }
     public void drawStats(){
@@ -247,8 +332,11 @@ public class UI {
         }
     }
     public void drawInventory(){
+
+        slotCol = gamePanel.getGameCFG().getPlayer().getInventorySlot();
+        slotRow = gamePanel.getGameCFG().getPlayer().getInventorySlot()/5;
         int frameX =gamePanel.getGameCFG().getTileSize()*9;
-        int frameY =gamePanel.getPlayerView().getScreenY()-2*gamePanel.getGameCFG().getTileSize();;
+        int frameY =gamePanel.getPlayerView().getScreenY()-2*gamePanel.getGameCFG().getTileSize();
         int frameWidth = gamePanel.getGameCFG().getTileSize()*6;
         int frameHeight = gamePanel.getGameCFG().getTileSize()*5;
         
@@ -321,6 +409,33 @@ public class UI {
         }
 
     }
+    public void loadViews(){
+        gamePanel.getGameCFG().getKeyboardController().setPlaceObj(false);
+        int id =gamePanel.getGameCFG().getLevelEditor().getDataMap()[gamePanel.getLevelEditorView().getLevelEditor().getCurCol()][gamePanel.getLevelEditorView().getLevelEditor().getCurRow()];
+        ObjectModel objectModel = gamePanel.getGameCFG().getAssetsSetter().chooseObj(id);
+        Entity entity = gamePanel.getGameCFG().getAssetsSetter().chooseEntity(id);
+        entityViews.removeIf(entityView ->
+                entityView.getEntity().getX() ==
+                        gamePanel.getLevelEditorView().getLevelEditor().getCurCol()*gamePanel.getGameCFG().getTileSize()
+                && entityView.getEntity().getY() ==
+                        gamePanel.getLevelEditorView().getLevelEditor().getCurRow()*gamePanel.getGameCFG().getTileSize());
+        objectViews.removeIf(objectView ->
+                objectView.getObjectModel().getX() ==
+                        gamePanel.getLevelEditorView().getLevelEditor().getCurCol() *gamePanel.getGameCFG().getTileSize()
+                && objectView.getObjectModel().getY() ==
+                        gamePanel.getLevelEditorView().getLevelEditor().getCurRow()*gamePanel.getGameCFG().getTileSize());
+        if(id<=17 && id > 1) {
+            objectModel.setX(gamePanel.getLevelEditorView().getLevelEditor().getCurCol()*gamePanel.getGameCFG().getTileSize());
+            objectModel.setY(gamePanel.getLevelEditorView().getLevelEditor().getCurRow()*gamePanel.getGameCFG().getTileSize());
+            objectViews.add(new ObjectView(gamePanel,objectModel));
+        }
+        else if(id>17){
+            entity.setX(gamePanel.getLevelEditorView().getLevelEditor().getCurCol()*gamePanel.getGameCFG().getTileSize());
+            entity.setY(gamePanel.getLevelEditorView().getLevelEditor().getCurRow()*gamePanel.getGameCFG().getTileSize());
+            entityViews.add(new EntityView(gamePanel,entity));
+        }
+
+    }
     public void drawGameOver(){
         graphics2D.setColor(new Color(0,0,0,150));
         graphics2D.fillRect(0,0,gamePanel.getGameCFG().getScreenWight(),gamePanel.getGameCFG().getScreenHeight());
@@ -359,18 +474,6 @@ public class UI {
     public int getForCenterText(String txt){
         int length =(int)graphics2D.getFontMetrics().getStringBounds(txt,graphics2D).getWidth();
         return gamePanel.getGameCFG().getScreenWight()/2-length/2;
-    }
-    public void drawPath(){
-        graphics2D.setColor(new Color(255,0,0,79));
-        for (int i = 0; i < gamePanel.getGameCFG().getNpc(3).getPathFinder().getPathList().size(); i++) {
-
-            int wX = gamePanel.getGameCFG().getNpc(3).getPathFinder().getPathList().get(i).getCol()*gamePanel.getGameCFG().getTileSize();
-            int wY = gamePanel.getGameCFG().getNpc(3).getPathFinder().getPathList().get(i).getRow()*gamePanel.getGameCFG().getTileSize();
-            int sX = wX -gamePanel.getGameCFG().getPlayer().getX() + gamePanel.getPlayerView().getScreenX();
-            int sY = wY -gamePanel.getGameCFG().getPlayer().getY() + gamePanel.getPlayerView().getScreenY();
-
-            graphics2D.fillRect(sX,sY,gamePanel.getGameCFG().getTileSize(),gamePanel.getGameCFG().getTileSize());
-        }
     }
     public void drawCursor(int x,int y){
         graphics2D.drawString("->",x-gamePanel.getGameCFG().getTileSize()/2,y);

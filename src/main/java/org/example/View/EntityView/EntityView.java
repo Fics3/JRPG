@@ -65,6 +65,16 @@ public class EntityView {
 
 
     }
+    public void drawEntityEditor(Graphics2D graphics2D){
+        if (entity.getY() + gamePanel.getGameCFG().getTileSize() > gamePanel.getGameCFG().getLevelEditor().getCurRow()*gamePanel.getGameCFG().getTileSize() - gamePanel.getLevelEditorView().getScreenY() &&
+                entity.getY() - gamePanel.getGameCFG().getLevelEditor().getGameCFG().getTileSize() < gamePanel.getGameCFG().getLevelEditor().getCurRow()*gamePanel.getGameCFG().getTileSize() + gamePanel.getLevelEditorView().getScreenY() &&
+                entity.getX() + gamePanel.getGameCFG().getLevelEditor().getGameCFG().getTileSize() > gamePanel.getGameCFG().getLevelEditor().getCurCol()*gamePanel.getGameCFG().getTileSize() - gamePanel.getLevelEditorView().getScreenX()&&
+                entity.getX() - gamePanel.getGameCFG().getLevelEditor().getGameCFG().getTileSize() < gamePanel.getGameCFG().getLevelEditor().getCurCol()*gamePanel.getGameCFG().getTileSize() + gamePanel.getLevelEditorView().getScreenX()) {
+            int screenXX = entity.getX()-gamePanel.getGameCFG().getLevelEditor().getCurCol()*gamePanel.getGameCFG().getTileSize()+gamePanel.getLevelEditorView().getScreenX();
+            int screenYY = entity.getY()-gamePanel.getGameCFG().getLevelEditor().getCurRow()*gamePanel.getGameCFG().getTileSize()+gamePanel.getLevelEditorView().getScreenY();
+            graphics2D.drawImage(getDown1(),screenXX,screenYY,null);
+        }
+    }
     public BufferedImage setup(String imageName){
         UtilityTools utilityTools = new UtilityTools();
         InOut inOut = new InOut();
@@ -199,5 +209,9 @@ public class EntityView {
 
     public String getName() {
         return name;
+    }
+
+    public Entity getEntity() {
+        return entity;
     }
 }

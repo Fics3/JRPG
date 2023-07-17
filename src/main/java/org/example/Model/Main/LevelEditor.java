@@ -8,9 +8,8 @@ public class LevelEditor {
     private String name;
     private int[][] map;
     private int[][] dataMap;
-    private int curTile= 5;
-    private int[] objects;
-    private int curObj;
+    private int curTile= 0;
+    private int curObj=2;
     private int col = 0;
     private int row = 0;
     private int curCol = 0;
@@ -32,9 +31,20 @@ public class LevelEditor {
     }
     public void placeTile(){
         map[curCol][curRow] = curTile;
-        System.out.println(map[curCol][curRow]);
-//        System.out.println(Arrays.deepToString(map));
     }
+    public void placeCollision(){
+        if(dataMap[curCol][curRow]==1) {
+            dataMap[curCol][curRow] = 0;
+        }
+        else if(dataMap[curCol][curRow]==0){
+            dataMap[curCol][curRow] =1;
+        }
+    }
+    public void placeObj(){
+
+            dataMap[curCol][curRow] = curObj;
+    }
+
     public void setCollision(){
         dataMap[curCol][curRow] = 1;
     }
@@ -87,5 +97,25 @@ public class LevelEditor {
 
     public void setCurTile(int curTile) {
         this.curTile = curTile;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setDataMap(int[][] dataMap) {
+        this.dataMap = dataMap;
+    }
+
+    public int[][] getDataMap() {
+        return dataMap;
+    }
+
+    public void setCurObj(int curObj) {
+        this.curObj = curObj;
+    }
+
+    public int getCurObj() {
+        return curObj;
     }
 }

@@ -17,9 +17,8 @@ public class PathFinder {
     private int[][] mapColData;
     public PathFinder (GameCFG gameCFG){
         this.gameCFG = gameCFG;
-        InOut inOut = new InOut();
-        mapColData = inOut.getDataMap(gameCFG);
         node = new Node[gameCFG.getMaxWorldCol()][gameCFG.getMaxWorldRow()];
+        mapColData = gameCFG.getDataMap();
         instantiateNodes();
     }
 
@@ -43,6 +42,7 @@ public class PathFinder {
         int row = 0;
 
         while (col< gameCFG.getMaxWorldCol() && row<gameCFG.getMaxWorldRow()){
+
             node[col][row].open=false;
             node[col][row].checked = false;
             node[col][row].solid = false;
@@ -232,4 +232,7 @@ public class PathFinder {
         this.node = node;
     }
 
+    public void setMapColData(int[][] mapColData) {
+        this.mapColData = mapColData;
+    }
 }

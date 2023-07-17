@@ -4,7 +4,7 @@ import org.example.Model.FightModel;
 import org.example.Model.Main.GameCFG;
 import org.example.Model.Main.KeyboardController;
 import org.example.Model.Object.Weapon.OBJ_woodSword;
-import org.example.Model.Object.Object;
+import org.example.Model.Object.ObjectModel;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -16,21 +16,21 @@ public class Player extends Entity {
     FightModel fightModel = new FightModel();
     private int exp = 0;
     private int maxExp = 10;
-    private ArrayList<Object> inventory = new ArrayList<>();
+    private ArrayList<ObjectModel> inventory = new ArrayList<>();
     private int inventorySize = 20;
     private int inventoryCapacity = 0;
     private int inventorySlot = 0;
-    private Object currentWeapon;
-    private Object currentHelmet;
-    private Object currentChest;
-    private Object currentBoots;
+    private ObjectModel currentWeapon;
+    private ObjectModel currentHelmet;
+    private ObjectModel currentChest;
+    private ObjectModel currentBoots;
     private int heathPotions=0;
     private int manaPotions=0;
 
     public Player(GameCFG gameCFG, KeyboardController keyboardController)  {
         super(gameCFG);
         for ( int i = 0; i<inventorySize ; i++) {
-            inventory.add(0,new Object(gameCFG));
+            inventory.add(0,new ObjectModel(gameCFG));
         }
         this.keyboardController = keyboardController;
         setSolidDefaultX(getSolidArea().x);
@@ -38,7 +38,7 @@ public class Player extends Entity {
 
         setName("Player");
         setCurrentWeapon(new OBJ_woodSword(gameCFG));
-        setSolidArea(new Rectangle(8, 16, (int) (getGameCFG().getTileSize() / 1.5), (int) (getGameCFG().getTileSize() / 1.5)));
+        setSolidArea(new Rectangle(16,16 , 24, 16));
         setDafautl();
         gameCFG.setGameState(gameCFG.getLoadInventory());
     }
@@ -60,7 +60,25 @@ public class Player extends Entity {
         setDirection("down");
     }
     public void update() {
+        int playerX = getX();
+        int playerY = getY();
+
+        if (playerX < 0) {
+            playerX = 0;
+        } else if (playerX > (getGameCFG().getMaxWorldCol()-1) * getGameCFG().getTileSize() - 16) {
+            playerX = (getGameCFG().getMaxWorldCol() - 1) * getGameCFG().getTileSize() - 16;
+        }
+
+        if (playerY < 0) {
+            playerY = 0;
+        } else if (playerY > (getGameCFG().getMaxWorldRow() - 1) * getGameCFG().getTileSize() - 16) {
+            playerY = (getGameCFG().getMaxWorldRow() - 1) * getGameCFG().getTileSize() - 16;
+        }
+
+        setX(playerX);
+        setY(playerY);
         if (getKeyboardController().isDownPressed() || getKeyboardController().isLeftPressed() ||getKeyboardController().isUpPressed() || getKeyboardController().isRightPressed()) {
+
             if (getGameCFG().getKeyboardController().isUpPressed()) {
                 setDirection("up");
                 this.setY(this.getY() - this.getSpeed());
@@ -89,8 +107,8 @@ public class Player extends Entity {
             else {
                 if (objId != null && keyboardController.isUseObject()) {
                     getGameCFG().getObjectWithId(objId).use();
-                    getGameCFG().setGameState(getGameCFG().getLoadGame());
                     getGameCFG().getObjects().remove(getGameCFG().getObjectWithId(objId));
+                    getGameCFG().setGameState(getGameCFG().getLoadGame());
                 }
             }
 
@@ -124,7 +142,6 @@ public class Player extends Entity {
                         setX(getX() + getSpeed());
                         break;
                 }
-
                 }
             setSpriteCycle(getSpriteCycle()+1);
             if (getSpriteCycle() > 15) {
@@ -134,11 +151,13 @@ public class Player extends Entity {
                 setSpriteCycle(0);
             }
         }
+        System.out.println(getX());
+        System.out.println(getY());
     }
     public void lvlUp(int exp){
         setExp(getExp()+exp);
         if(getExp()>=maxExp*getLvl() && getLvl()<10){
-            setExp(getMaxExp()-getExp());
+            setExp(0);
             setLvl(getLvl()+1);
             setMaxHP(getMaxHP()+10*getLvl());
             setHP(getMaxHP());
@@ -203,9 +222,9 @@ public class Player extends Entity {
     }
 
     public void removePotion(String potionName){
-        for (Object object : inventory) {
-            if(Objects.equals(object.getName(), potionName)){
-                getGameCFG().consume(object);
+        for (ObjectModel objectModel : inventory) {
+            if(Objects.equals(objectModel.getName(), potionName)){
+                getGameCFG().consume(objectModel);
                 break;
             }
         }
@@ -235,15 +254,15 @@ public class Player extends Entity {
         this.maxExp = maxExp;
     }
 
-    public ArrayList<Object> getInventory() {
+    public ArrayList<ObjectModel> getInventory() {
         return inventory;
     }
 
-    public void setInventory(ArrayList<Object> inventory) {
+    public void setInventory(ArrayList<ObjectModel> inventory) {
         this.inventory = inventory;
     }
-    public void addItem(Object object){
-        this.inventory.set(inventoryCapacity,object);
+    public void addItem(ObjectModel objectModel){
+        this.inventory.set(inventoryCapacity, objectModel);
         inventoryCapacity++;
     }
 
@@ -263,39 +282,39 @@ public class Player extends Entity {
         this.inventorySize = inventorySize;
     }
 
-    public Object getCurrentWeapon() {
+    public ObjectModel getCurrentWeapon() {
         return currentWeapon;
     }
 
-    public void setCurrentWeapon(Object currentWeapon) {
+    public void setCurrentWeapon(ObjectModel currentWeapon) {
         this.currentWeapon = currentWeapon;
     }
 
-    public Object getCurrentHelmet() {
+    public ObjectModel getCurrentHelmet() {
         return currentHelmet;
     }
 
-    public void setCurrentHelmet(Object currentHelmet) {
+    public void setCurrentHelmet(ObjectModel currentHelmet) {
         this.currentHelmet = currentHelmet;
     }
 
-    public Object getCurrentChest() {
+    public ObjectModel getCurrentChest() {
         return currentChest;
     }
 
-    public void setCurrentChest(Object currentChest) {
+    public void setCurrentChest(ObjectModel currentChest) {
         this.currentChest = currentChest;
     }
 
-    public Object getCurrentBoots() {
+    public ObjectModel getCurrentBoots() {
         return currentBoots;
     }
 
-    public void setCurrentBoots(Object currentBoots) {
+    public void setCurrentBoots(ObjectModel currentBoots) {
         this.currentBoots = currentBoots;
     }
-    public void addItemOnPlace(int id, Object object){
-        inventory.add(id , object);
+    public void addItemOnPlace(int id, ObjectModel objectModel){
+        inventory.add(id , objectModel);
     }
 
     public void setInventoryCapacity(int inventoryCapacity) {

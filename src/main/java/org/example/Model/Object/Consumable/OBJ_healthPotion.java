@@ -1,9 +1,9 @@
 package org.example.Model.Object.Consumable;
 
 import org.example.Model.Main.GameCFG;
-import org.example.Model.Object.Object;
+import org.example.Model.Object.ObjectModel;
 
-public class OBJ_healthPotion extends Object {
+public class OBJ_healthPotion extends ObjectModel {
     private int heal;
     public OBJ_healthPotion(GameCFG gameCFG) {
         super(gameCFG);

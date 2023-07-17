@@ -20,7 +20,7 @@ public class IOTest {
     }
     @Test
     public void testReadImage() {
-        BufferedImage image = ioUtils.setup("GreenBoy_FWalk1");
+        BufferedImage image = ioUtils.setup("/NPC/GreenBoy_FWalk1");
         assertNotNull(image);
     }
     @Test

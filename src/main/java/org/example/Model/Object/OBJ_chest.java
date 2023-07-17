@@ -5,7 +5,7 @@ import org.example.Model.Main.GameCFG;
 
 import java.util.Random;
 
-public class OBJ_chest extends Object {
+public class OBJ_chest extends ObjectModel {
     public OBJ_chest(GameCFG gameCFG) {
         super(gameCFG);
         setCollision(true);
@@ -15,7 +15,7 @@ public class OBJ_chest extends Object {
         AssetsSetter assetsSetter = new AssetsSetter(getGameCFG());
         Random random = new Random();
         int i = random.nextInt(4,17);
-        Object tmp = (assetsSetter.chooseObj(i));
+        ObjectModel tmp = (assetsSetter.chooseObj(i));
         tmp.setX(this.getX());
         tmp.setY(this.getY());
         tmp.setId(this.getId());

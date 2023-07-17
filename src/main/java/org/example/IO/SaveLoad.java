@@ -1,11 +1,11 @@
 package org.example.IO;
 
-import org.example.Model.Entity.Player;
-import org.example.Model.Main.AssetsSetter;
+import org.example.Model.Entity.Entity;
 import org.example.Model.Main.GameCFG;
-import org.example.Model.Object.Object;
+import org.example.Model.Object.ObjectModel;
 
 import java.io.*;
+import java.util.Objects;
 
 public class SaveLoad {
 
@@ -16,7 +16,13 @@ public class SaveLoad {
     public void save() {
         ObjectOutputStream objectOutputStream = null;
         try {
-            objectOutputStream = new ObjectOutputStream(new FileOutputStream(new File("save.dat")));
+            if (Objects.equals(gameCFG.getName(), "world")) {
+                objectOutputStream = new ObjectOutputStream(new FileOutputStream(new File("save.dat")));
+            }
+            else if(Objects.equals(gameCFG.getName(), "custom")){
+                objectOutputStream = new ObjectOutputStream(new FileOutputStream(new File("custom.dat")));
+
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -39,16 +45,35 @@ public class SaveLoad {
             dataStorage.setCurrentHelmet(gameCFG.getPlayer().getCurrentHelmet().getName());}
         if(gameCFG.getPlayer().getCurrentBoots()!=null){
             dataStorage.setCurrentBoots(gameCFG.getPlayer().getCurrentBoots().getName());}
-        for (Object object : gameCFG.getPlayer().getInventory()) {
-            dataStorage.getInventory().add(object.getName());
+        for (ObjectModel objectModel : gameCFG.getPlayer().getInventory()) {
+            dataStorage.getInventory().add(objectModel.getName());
         }
-        for (Object object : gameCFG.getObjects()){
+        for (ObjectModel objectModel : gameCFG.getObjects()){
             Integer [] tmp = new Integer[3];
-            tmp[0] = object.getX();
-            tmp[1] = object.getY();
-            tmp[2] = object.getId();
-            dataStorage.getObjects().put(object.getName(),tmp);
+            tmp[0] = objectModel.getX();
+            tmp[1] = objectModel.getY();
+            tmp[2] = objectModel.getId();
+            dataStorage.getObjects().put(objectModel.getName(),tmp);
         }
+        for (Entity entity : gameCFG.getNpcs()){
+            Integer [] tmp = new Integer[3];
+            tmp[0] = entity.getX();
+            tmp[1] = entity.getY();
+            tmp[2] = entity.getId();
+            dataStorage.getEntities().put(entity.getName(),tmp);
+        }
+        dataStorage.setMaxWorldCol(gameCFG.getMaxWorldCol());
+        dataStorage.setMaxWorldRow(gameCFG.getMaxWorldRow());
+        dataStorage.setMap(gameCFG.getMapDataNum());
+        dataStorage.setDataMap(gameCFG.getDataMap());
+//        dataStorage.setDataMap(new int[dataStorage.getMaxWorldCol()][dataStorage.getMaxWorldRow()]);
+//        for (int i = 0; i < gameCFG.getMaxWorldCol(); i++) {
+//            for (int j = 0; j < gameCFG.getMaxWorldRow(); j++) {
+//                if (gameCFG.getDataMap()[i][j]<=1){
+//                    dataStorage.getDataMap()[i][j]=gameCFG.getDataMap()[i][j];
+//                }
+//            }
+//        }
         try {
             objectOutputStream.writeObject(dataStorage);
         } catch (IOException e) {
@@ -57,11 +82,11 @@ public class SaveLoad {
 
     }
 
-    public void load()  {
+    public void load(String name)  {
 
         ObjectInputStream objectInputStream = null;
         try {
-            objectInputStream = new ObjectInputStream(new FileInputStream(new File("save.dat")));
+            objectInputStream = new ObjectInputStream(new FileInputStream(new File(name+".dat")));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -89,20 +114,38 @@ public class SaveLoad {
             if(string!=null) {
                 gameCFG.getPlayer().getInventory().add(gameCFG.getAssetsSetter().chooseObjName(string));
             }
-            else gameCFG.getPlayer().getInventory().add(new Object(gameCFG));
+            else gameCFG.getPlayer().getInventory().add(new ObjectModel(gameCFG));
         }
         gameCFG.getPlayer().setInventoryCapacity(dataStorage.getInventoryCapacity());
         gameCFG.getObjects().clear();
         for (var entry : dataStorage.getObjects().entries()){
             for (int i = 0; i<entry.getValue().length;i++) {
-                Object object = gameCFG.getAssetsSetter().chooseObjName(entry.getKey());
-                object.setX(entry.getValue()[i]);
-                object.setY(entry.getValue()[i+1]);
-                object.setId(entry.getValue()[i+2]);
+                System.out.println(entry.getKey());
+                ObjectModel objectModel = gameCFG.getAssetsSetter().chooseObjName(entry.getKey());
+                objectModel.setX(entry.getValue()[i]);
+                objectModel.setY(entry.getValue()[i+1]);
+                objectModel.setId(entry.getValue()[i+2]);
                 i+=2;
-                gameCFG.setObject(object);
+                gameCFG.setObject(objectModel);
 //                System.out.println(object.getName() + "  X  " + object.getX() + "  Y " + object.getY());
             }
         }
+        gameCFG.getNpcs().clear();
+        for (var entry : dataStorage.getEntities().entries()){
+            for (int i = 0; i<entry.getValue().length;i++) {
+                Entity entity = gameCFG.getAssetsSetter().chooseEntityName(entry.getKey());
+                entity.setX(entry.getValue()[i]);
+                entity.setY(entry.getValue()[i+1]);
+                entity.setId(entry.getValue()[i+2]);
+                i+=2;
+                gameCFG.setNpcs(entity);
+//                System.out.println(object.getName() + "  X  " + object.getX() + "  Y " + object.getY());
+            }
+        }
+        gameCFG.setMapDataNum(dataStorage.getMap());
+        gameCFG.setDataMap(dataStorage.getDataMap());
+        gameCFG.setMaxWorldRow(dataStorage.getMaxWorldRow());
+        gameCFG.setMaxWorldCol(dataStorage.getMaxWorldCol());
+
     }
 }
