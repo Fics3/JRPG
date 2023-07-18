@@ -7,16 +7,16 @@ import java.io.*;
 public class SaveLoadWorld {
 
     private GameCFG gameCFG;
-
+    boolean load = false;
     public SaveLoadWorld(GameCFG gameCFG){
         this.gameCFG = gameCFG;
     }
 
-    public void save(){
+    public void save(String filename){
         gameCFG.getLevelEditor().getMap();
         ObjectOutputStream objectOutputStream = null;
         try {
-            objectOutputStream = new ObjectOutputStream(new FileOutputStream(new File("customSave.dat")));
+            objectOutputStream = new ObjectOutputStream(new FileOutputStream(new File(filename+".dat")));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -36,21 +36,33 @@ public class SaveLoadWorld {
     }
     public void load(String name){
         ObjectInputStream objectInputStream = null;
-        try {
-            objectInputStream = new ObjectInputStream(new FileInputStream(new File(name+".dat")));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        DataStorageWorld dataStorageWorld = null;
+        File file = new File(name+".dat");
+        if(file.exists()) {
+            try {
+                objectInputStream = new ObjectInputStream(new FileInputStream(new File(name + ".dat")));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            DataStorageWorld dataStorageWorld = null;
 
-        try {
-            dataStorageWorld = (DataStorageWorld) objectInputStream.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            try {
+                dataStorageWorld = (DataStorageWorld) objectInputStream.readObject();
+            } catch (IOException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+            gameCFG.setMaxWorldCol(dataStorageWorld.getMaxWorldCol());
+            gameCFG.setMaxWorldRow(dataStorageWorld.getMaxWorldRow());
+            gameCFG.setDataMap(dataStorageWorld.getDataMap());
+            gameCFG.setMapDataNum(dataStorageWorld.getMap());
+            load =true;
         }
-        gameCFG.setMaxWorldCol(dataStorageWorld.getMaxWorldCol());
-        gameCFG.setMaxWorldRow(dataStorageWorld.getMaxWorldRow());
-        gameCFG.setDataMap(dataStorageWorld.getDataMap());
-        gameCFG.setMapDataNum(dataStorageWorld.getMap());
+    }
+
+    public void setLoad(boolean load) {
+        this.load = load;
+    }
+
+    public boolean isLoad() {
+        return load;
     }
 }

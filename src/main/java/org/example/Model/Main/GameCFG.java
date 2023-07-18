@@ -50,12 +50,10 @@ public class GameCFG {
     private Player player;
 
     SaveLoadWorld saveLoadWorld = new SaveLoadWorld(this);
-    private String tmp="RAP";
     private int[][] mapDataNum;
     private int[][] dataMap;
 
     public GameCFG (){
-        InOut inOut = new InOut();
         player = new Player(this,keyboardController);
         saveLoadWorld.load("world");
         setGameState(getTitleState());
@@ -64,7 +62,7 @@ public class GameCFG {
     public void setupGame() {
         setName("world");
         pathFinder = new PathFinder(this);
-        saveLoadWorld.load("world");
+        saveLoadWorld.load(name);
         objectModels.clear();
         npcs.clear();
         assetsSetter.setObject();
@@ -73,7 +71,7 @@ public class GameCFG {
         collisionChecker = new CollisionChecker(this, player);
         player.setX(maxWorldWight/2-getTileSize());
         player.setY(maxWorldHeight/2-getTileSize());
-
+        gameState = loadGame;
     }
     public void loadCustomGame(){
         setName("custom");
@@ -280,13 +278,6 @@ public class GameCFG {
         return dialogueState;
     }
 
-    public String getTmp() {
-        return tmp;
-    }
-
-    public void setTmp(String tmp) {
-        this.tmp = tmp;
-    }
     public int getMaxWorldHeight() {
         return maxWorldHeight;
     }

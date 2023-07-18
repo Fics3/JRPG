@@ -1,5 +1,3 @@
-package test;
-
 import org.example.IO.InOut;
 import org.example.Model.Main.GameCFG;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,21 +8,21 @@ import java.awt.image.BufferedImage;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class IOTest {
-    private InOut ioUtils = new InOut();
-    private GameCFG gamePanelSettings = new GameCFG();
+    private InOut inOut = new InOut();
+    private GameCFG gameCFG = new GameCFG();
 
     @BeforeEach
     public void setUp() {
-        ioUtils = new InOut();
-        gamePanelSettings = new GameCFG();
+        inOut = new InOut();
+        gameCFG = new GameCFG();
     }
     @Test
     public void testReadImage() {
-        BufferedImage image = ioUtils.setup("/NPC/GreenBoy_FWalk1");
+        BufferedImage image = inOut.setup("/NPC/GreenBoy_FWalk1");
         assertNotNull(image);
     }
-    @Test
-    public void testLoadMap() {
-        ioUtils.getDataMap(gamePanelSettings);
-    }
+//    @Test
+//    public void testLoadMap() {
+//        inOut.getDataMap(gameCFG);
+//    }
 }

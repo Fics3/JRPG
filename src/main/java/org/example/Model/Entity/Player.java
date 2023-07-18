@@ -151,8 +151,6 @@ public class Player extends Entity {
                 setSpriteCycle(0);
             }
         }
-        System.out.println(getX());
-        System.out.println(getY());
     }
     public void lvlUp(int exp){
         setExp(getExp()+exp);
@@ -166,7 +164,6 @@ public class Player extends Entity {
         }
     }
     public void speak(int id){
-        getGameCFG().setTmp(getGameCFG().getNpc(id).getCurrentDialogue());
         switch (this.getDirection()){
             case "up":
                 getGameCFG().getNpc(id).setDirection("down");

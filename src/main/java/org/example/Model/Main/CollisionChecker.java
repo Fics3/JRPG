@@ -37,7 +37,6 @@ public class CollisionChecker {
                 tileN2 = getMapColData(entityRightCol, entityTopRow);
                 if (tileN1 == 1 && tileN2 == 1) {
                     entity.setCollisionOn(true);
-                    System.out.println("UP");
                 }
             case "down":
                 entityBotRow = (entityBotY + entity.getSpeed()) / gameCFG.getTileSize();
@@ -45,7 +44,6 @@ public class CollisionChecker {
                 tileN2 = getMapColData(entityRightCol, entityBotRow);
                 if (tileN1 == 1 && tileN2 == 1) {
                     entity.setCollisionOn(true);
-                    System.out.println("DOWN");
 
                 }
             case "right":
@@ -54,7 +52,6 @@ public class CollisionChecker {
                 tileN2 = getMapColData(entityRightCol, entityBotRow);
                 if (tileN1 == 1 && tileN2 == 1) {
                     entity.setCollisionOn(true);
-                    System.out.println("RIGHT");
 
                 }
             case "left":
@@ -62,7 +59,6 @@ public class CollisionChecker {
                 tileN1 = getMapColData(entityLeftCol, entityTopRow);
                 tileN2 = getMapColData(entityLeftCol, entityBotRow);
                 if (tileN1 == 1 && tileN2 == 1) {
-                    System.out.println("LEFT");
                     entity.setCollisionOn(true);
                 }
 

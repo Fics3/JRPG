@@ -94,32 +94,15 @@ public class Entity {
 
         setAction();
         if(isEnemy) {runToPlayer();}
-//        if(isCollisionOn()){
-//            switch (getDirection()){
-//                case "up":setY(getY()+getSpeed()); break;
-//                case "down":setY(getY()-getSpeed()); break;
-//                case "right":setX(getX()-getSpeed()); break;
-//                case "left":setX(getX()+getSpeed()); break;
-//            }
-//        }
+
         if(!isCollisionOn()){
-//            int newX = getX();
-//            int newY = getY();
             switch (getDirection()){
                 case "up":setY(getY()-getSpeed()); break;
                 case "down":setY(getY()+getSpeed()); break;
                 case "right":setX(getX()+getSpeed()); break;
                 case "left":setX(getX()-getSpeed()); break;
             }
-//            int mapWidth = gameCFG.getMaxWorldCol() * gameCFG.getTileSize() - gameCFG.getTileSize();
-//            int mapHeight = gameCFG.getMaxWorldRow() *gameCFG.getTileSize() - gameCFG.getTileSize();
-//
-//            if (newX >= 0 && newX + gameCFG.getTileSize() <= mapWidth) {
-//                setX(newX);
-//            }
-//            if (newY >= 0 && newY + gameCFG.getTileSize() <= mapHeight) {
-//                setY(newY);
-//            }
+
         }
         setCollisionOn(false);
 
@@ -140,7 +123,6 @@ public class Entity {
             else if (getSpriteNum() == 3) setSpriteNum(1);
             spriteCycle = 0;
         }
-        System.out.println(collisionOn);
     }
 
     public void runToPlayer() {

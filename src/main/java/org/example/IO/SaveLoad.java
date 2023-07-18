@@ -8,6 +8,7 @@ import java.io.*;
 import java.util.Objects;
 
 public class SaveLoad {
+    boolean load=false;
 
     GameCFG gameCFG;
 
@@ -82,70 +83,81 @@ public class SaveLoad {
 
     }
 
-    public void load(String name)  {
-
+    public void load(String name) {
+        System.out.println(name);
         ObjectInputStream objectInputStream = null;
-        try {
-            objectInputStream = new ObjectInputStream(new FileInputStream(new File(name+".dat")));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        DataStorage dataStorage = null;
-        try {
-            dataStorage = (DataStorage) objectInputStream.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
-        gameCFG.getPlayer().setMaxHP(dataStorage.getMaxHP());
-        gameCFG.getPlayer().setHP(dataStorage.getHP());
-        gameCFG.getPlayer().setMaxMana(dataStorage.getMaxMana());
-        gameCFG.getPlayer().setMana(dataStorage.getMana());
-        gameCFG.getPlayer().setLvl(dataStorage.getLvl());
-        gameCFG.getPlayer().setExp(dataStorage.getExp());
-        gameCFG.getPlayer().setDamage(dataStorage.getDamage());
-        gameCFG.getPlayer().setCurrentWeapon(gameCFG.getAssetsSetter().chooseObjName(dataStorage.getCurrentWeapon()));
-        gameCFG.getPlayer().setCurrentChest(gameCFG.getAssetsSetter().chooseObjName(dataStorage.getCurrentChest()));
-        gameCFG.getPlayer().setCurrentHelmet(gameCFG.getAssetsSetter().chooseObjName(dataStorage.getCurrentHelmet()));
-        gameCFG.getPlayer().setCurrentBoots(gameCFG.getAssetsSetter().chooseObjName(dataStorage.getCurrentBoots()));
-        gameCFG.getPlayer().getInventory().clear();
-        for (String string : dataStorage.getInventory()) {
-            if(string!=null) {
-                gameCFG.getPlayer().getInventory().add(gameCFG.getAssetsSetter().chooseObjName(string));
+        File file = new File(name + ".dat");
+        System.out.println(file.exists());
+        if (file.exists()) {
+            try {
+                objectInputStream = new ObjectInputStream(new FileInputStream(file));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-            else gameCFG.getPlayer().getInventory().add(new ObjectModel(gameCFG));
-        }
-        gameCFG.getPlayer().setInventoryCapacity(dataStorage.getInventoryCapacity());
-        gameCFG.getObjects().clear();
-        for (var entry : dataStorage.getObjects().entries()){
-            for (int i = 0; i<entry.getValue().length;i++) {
-                System.out.println(entry.getKey());
-                ObjectModel objectModel = gameCFG.getAssetsSetter().chooseObjName(entry.getKey());
-                objectModel.setX(entry.getValue()[i]);
-                objectModel.setY(entry.getValue()[i+1]);
-                objectModel.setId(entry.getValue()[i+2]);
-                i+=2;
-                gameCFG.setObject(objectModel);
+
+            DataStorage dataStorage = null;
+            try {
+                dataStorage = (DataStorage) objectInputStream.readObject();
+            } catch (IOException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+
+            gameCFG.getPlayer().setMaxHP(dataStorage.getMaxHP());
+            gameCFG.getPlayer().setHP(dataStorage.getHP());
+            gameCFG.getPlayer().setMaxMana(dataStorage.getMaxMana());
+            gameCFG.getPlayer().setMana(dataStorage.getMana());
+            gameCFG.getPlayer().setLvl(dataStorage.getLvl());
+            gameCFG.getPlayer().setExp(dataStorage.getExp());
+            gameCFG.getPlayer().setDamage(dataStorage.getDamage());
+            gameCFG.getPlayer().setCurrentWeapon(gameCFG.getAssetsSetter().chooseObjName(dataStorage.getCurrentWeapon()));
+            gameCFG.getPlayer().setCurrentChest(gameCFG.getAssetsSetter().chooseObjName(dataStorage.getCurrentChest()));
+            gameCFG.getPlayer().setCurrentHelmet(gameCFG.getAssetsSetter().chooseObjName(dataStorage.getCurrentHelmet()));
+            gameCFG.getPlayer().setCurrentBoots(gameCFG.getAssetsSetter().chooseObjName(dataStorage.getCurrentBoots()));
+            gameCFG.getPlayer().getInventory().clear();
+            for (String string : dataStorage.getInventory()) {
+                if (string != null) {
+                    gameCFG.getPlayer().getInventory().add(gameCFG.getAssetsSetter().chooseObjName(string));
+                } else gameCFG.getPlayer().getInventory().add(new ObjectModel(gameCFG));
+            }
+            gameCFG.getPlayer().setInventoryCapacity(dataStorage.getInventoryCapacity());
+            gameCFG.getObjects().clear();
+            for (var entry : dataStorage.getObjects().entries()) {
+                for (int i = 0; i < entry.getValue().length; i++) {
+                    System.out.println(entry.getKey());
+                    ObjectModel objectModel = gameCFG.getAssetsSetter().chooseObjName(entry.getKey());
+                    objectModel.setX(entry.getValue()[i]);
+                    objectModel.setY(entry.getValue()[i + 1]);
+                    objectModel.setId(entry.getValue()[i + 2]);
+                    i += 2;
+                    gameCFG.setObject(objectModel);
 //                System.out.println(object.getName() + "  X  " + object.getX() + "  Y " + object.getY());
+                }
             }
-        }
-        gameCFG.getNpcs().clear();
-        for (var entry : dataStorage.getEntities().entries()){
-            for (int i = 0; i<entry.getValue().length;i++) {
-                Entity entity = gameCFG.getAssetsSetter().chooseEntityName(entry.getKey());
-                entity.setX(entry.getValue()[i]);
-                entity.setY(entry.getValue()[i+1]);
-                entity.setId(entry.getValue()[i+2]);
-                i+=2;
-                gameCFG.setNpcs(entity);
+            gameCFG.getNpcs().clear();
+            for (var entry : dataStorage.getEntities().entries()) {
+                for (int i = 0; i < entry.getValue().length; i++) {
+                    Entity entity = gameCFG.getAssetsSetter().chooseEntityName(entry.getKey());
+                    entity.setX(entry.getValue()[i]);
+                    entity.setY(entry.getValue()[i + 1]);
+                    entity.setId(entry.getValue()[i + 2]);
+                    i += 2;
+                    gameCFG.setNpcs(entity);
 //                System.out.println(object.getName() + "  X  " + object.getX() + "  Y " + object.getY());
+                }
             }
+            gameCFG.setMapDataNum(dataStorage.getMap());
+            gameCFG.setDataMap(dataStorage.getDataMap());
+            gameCFG.setMaxWorldRow(dataStorage.getMaxWorldRow());
+            gameCFG.setMaxWorldCol(dataStorage.getMaxWorldCol());
+            load = true;
         }
-        gameCFG.setMapDataNum(dataStorage.getMap());
-        gameCFG.setDataMap(dataStorage.getDataMap());
-        gameCFG.setMaxWorldRow(dataStorage.getMaxWorldRow());
-        gameCFG.setMaxWorldCol(dataStorage.getMaxWorldCol());
+    }
 
+    public boolean isLoad() {
+        return load;
+    }
+
+    public void setLoad(boolean load) {
+        this.load = load;
     }
 }

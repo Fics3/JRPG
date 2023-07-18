@@ -14,7 +14,7 @@ public class OBJ_healthPotion extends ObjectModel {
     }
     public void consume(){
         getGameCFG().getPlayer().setHP(getGameCFG().getPlayer().getHP()+heal);
-        if(getGameCFG().getPlayer().getMaxHP()<getGameCFG().getPlayer().getHP()){
+        if(getGameCFG().getPlayer().getMaxHP()<=getGameCFG().getPlayer().getHP()){
             getGameCFG().getPlayer().setHP(getGameCFG().getPlayer().getMaxHP());
         }
     }

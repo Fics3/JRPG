@@ -39,8 +39,7 @@ public class FightModel{
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-//            System.out.println("PlayerHp: "+player.getHP());
-//            System.out.println("EnemyHP: "+entity.getHP());
+
             if (player.getKeyboardController().isFight()) {
                 if (player.getKeyboardController().isSlash()) {
                     player.slash(entity);

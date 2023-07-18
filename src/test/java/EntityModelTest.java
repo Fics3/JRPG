@@ -1,5 +1,3 @@
-package test;
-
 import org.example.IO.SaveLoadWorld;
 import org.example.Model.Entity.Entity;
 import org.example.Model.Main.GameCFG;
@@ -16,7 +14,6 @@ public class EntityModelTest {
     @BeforeEach
     public void setup(){
         gameCFG = new GameCFG();
-        SaveLoadWorld saveLoadWorld = new SaveLoadWorld(gameCFG);
         gameCFG.setupGame();
         entity = new Entity(gameCFG);
     }
@@ -45,7 +42,7 @@ public class EntityModelTest {
     public void testTilesBounds(){
         SaveLoadWorld saveLoadWorld = new SaveLoadWorld(gameCFG);
 
-        saveLoadWorld.load("tileCollisionTest");
+        saveLoadWorld.load("src/test/java/tileCollisionTest");
         gameCFG.getCollisionChecker().setMapColData(gameCFG.getDataMap());
         entity.setDirection("left");
         entity.setSpeed(4);
@@ -58,7 +55,7 @@ public class EntityModelTest {
     public void testObjectBounds(){
         SaveLoadWorld saveLoadWorld = new SaveLoadWorld(gameCFG);
 
-        saveLoadWorld.load("objCollisionTest");
+        saveLoadWorld.load("src/test/java/objCollisionTest");
         gameCFG.loadCustomGame();
         entity.setDirection("left");
         entity.setSpeed(4);
