@@ -55,14 +55,14 @@ public class GameCFG {
 
     public GameCFG (){
         player = new Player(this,keyboardController);
-        saveLoadWorld.load("world");
+        saveLoadWorld.load("src/main/resources/Saves/world");
         setGameState(getTitleState());
     }
 
     public void setupGame() {
         setName("world");
+        saveLoadWorld.load("src/main/resources/Saves/"+name);
         pathFinder = new PathFinder(this);
-        saveLoadWorld.load(name);
         objectModels.clear();
         npcs.clear();
         assetsSetter.setObject();

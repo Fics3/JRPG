@@ -108,14 +108,14 @@ public class KeyboardController implements KeyListener {
 
     public void titleScreen(int code){
         if(code==KeyEvent.VK_S){
-            if(commandNum==6){
+            if(commandNum==5){
                 commandNum=0;
             }
             else commandNum++;
         }
         if(code==KeyEvent.VK_W){
             if(commandNum==0){
-                commandNum=6;
+                commandNum=5;
             }
             else commandNum--;
         }
@@ -126,7 +126,7 @@ public class KeyboardController implements KeyListener {
             }
             if(commandNum == 1){
                 gameCFG.setName("world");
-                saveLoad.load("save");
+                saveLoad.load("src/main/resources/Saves/save");
                 if(saveLoad.isLoad()) {
                     gameCFG.loadGame();
                     gameCFG.setGameState(gameCFG.getLoadGame());
@@ -134,12 +134,12 @@ public class KeyboardController implements KeyListener {
                 }
                 else gameCFG.setupGame();
             }
-            if(commandNum == 3){
+            if(commandNum == 2){
                 loadObj=true;
                 gameCFG.setGameState(gameCFG.getLevelEditorState());
             }
-            if(commandNum == 4){
-                saveLoadWorld.load("customSave");
+            if(commandNum == 3){
+                saveLoadWorld.load("src/main/resources/Saves/customSave");
                 if(saveLoadWorld.isLoad()) {
                     gameCFG.loadCustomGame();
                     saveLoadWorld.setLoad(false);
@@ -148,15 +148,15 @@ public class KeyboardController implements KeyListener {
                     gameCFG.setupGame();
                 }
             }
-            if(commandNum == 5){
+            if(commandNum == 4){
                 gameCFG.setName("custom");
-                saveLoad.load("custom");
+                saveLoad.load("src/main/resources/Saves/custom");
                 if(saveLoad.isLoad()) {
                     gameCFG.loadGame();
                     saveLoad.setLoad(false);
                 }
                 else {
-                    saveLoadWorld.load("customSave");
+                    saveLoadWorld.load("src/main/resources/Saves/customSave");
                     if(saveLoadWorld.isLoad()) {
                         gameCFG.loadCustomGame();
                         saveLoadWorld.setLoad(false);
@@ -166,7 +166,7 @@ public class KeyboardController implements KeyListener {
                     }
                 }
             }
-            if(commandNum == 6){
+            if(commandNum == 5){
                 System.exit(0);
             }
         }

@@ -18,10 +18,10 @@ public class SaveLoad {
         ObjectOutputStream objectOutputStream = null;
         try {
             if (Objects.equals(gameCFG.getName(), "world")) {
-                objectOutputStream = new ObjectOutputStream(new FileOutputStream(new File("save.dat")));
+                objectOutputStream = new ObjectOutputStream(new FileOutputStream(new File("src/main/resources/Saves/save.dat")));
             }
             else if(Objects.equals(gameCFG.getName(), "custom")){
-                objectOutputStream = new ObjectOutputStream(new FileOutputStream(new File("custom.dat")));
+                objectOutputStream = new ObjectOutputStream(new FileOutputStream(new File("src/main/resources/Saves/custom.dat")));
 
             }
         } catch (IOException e) {
@@ -87,7 +87,6 @@ public class SaveLoad {
         System.out.println(name);
         ObjectInputStream objectInputStream = null;
         File file = new File(name + ".dat");
-        System.out.println(file.exists());
         if (file.exists()) {
             try {
                 objectInputStream = new ObjectInputStream(new FileInputStream(file));

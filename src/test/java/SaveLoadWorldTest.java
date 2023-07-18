@@ -18,12 +18,12 @@ public class SaveLoadWorldTest {
         gameCFG.getLevelEditor().setCol(4);
         gameCFG.getLevelEditor().setRow(4);
         gameCFG.getLevelEditor().setLevel("testCustomWorld");
-        saveLoadWorld.save("src/test/java/test/testCustomWorld");
+        saveLoadWorld.save("src/test/java/testCustomWorld");
         System.out.println(System.getProperty("user.dir"));
 
         int[][] map = gameCFG.getLevelEditor().getDataMap();
 
-        saveLoadWorld.load("src/test/java/test/testCustomWorld");
+        saveLoadWorld.load("src/test/java/testCustomWorld");
 
         gameCFG.loadCustomGame();
         assertEquals(Arrays.deepToString(map),Arrays.deepToString(gameCFG.getDataMap()));

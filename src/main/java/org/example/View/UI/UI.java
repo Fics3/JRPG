@@ -93,39 +93,39 @@ public class UI {
         if(gamePanel.getGameCFG().getKeyboardController().getCommandNum() == 1){
             drawCursor(textX,textY);
         }
-        txt = "Options";
+//        txt = "Options";
+//        textX = getForCenterText(txt);
+//        textY +=gamePanel.getGameCFG().getTileSize()/2;
+//        graphics2D.drawString(txt,textX,textY);
+//        if(gamePanel.getGameCFG().getKeyboardController().getCommandNum() == 2){
+//            drawCursor(textX,textY);
+//        }
+        txt = "Level Editor";
         textX = getForCenterText(txt);
         textY +=gamePanel.getGameCFG().getTileSize()/2;
         graphics2D.drawString(txt,textX,textY);
         if(gamePanel.getGameCFG().getKeyboardController().getCommandNum() == 2){
             drawCursor(textX,textY);
         }
-        txt = "Level Editor";
+        txt = "New Game at Custom Level";
         textX = getForCenterText(txt);
         textY +=gamePanel.getGameCFG().getTileSize()/2;
         graphics2D.drawString(txt,textX,textY);
         if(gamePanel.getGameCFG().getKeyboardController().getCommandNum() == 3){
             drawCursor(textX,textY);
         }
-        txt = "New Game at Custom Level";
+        txt = "Load Custom Level ";
         textX = getForCenterText(txt);
         textY +=gamePanel.getGameCFG().getTileSize()/2;
         graphics2D.drawString(txt,textX,textY);
         if(gamePanel.getGameCFG().getKeyboardController().getCommandNum() == 4){
             drawCursor(textX,textY);
         }
-        txt = "Load Custom Level ";
-        textX = getForCenterText(txt);
-        textY +=gamePanel.getGameCFG().getTileSize()/2;
-        graphics2D.drawString(txt,textX,textY);
-        if(gamePanel.getGameCFG().getKeyboardController().getCommandNum() == 5){
-            drawCursor(textX,textY);
-        }
         txt = "Exit";
         textX = getForCenterText(txt);
         textY +=gamePanel.getGameCFG().getTileSize()/2;
         graphics2D.drawString(txt,textX,textY);
-        if(gamePanel.getGameCFG().getKeyboardController().getCommandNum() == 6){
+        if(gamePanel.getGameCFG().getKeyboardController().getCommandNum() == 5){
             drawCursor(textX,textY);
         }
     }
