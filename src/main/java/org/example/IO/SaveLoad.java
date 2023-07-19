@@ -57,10 +57,11 @@ public class SaveLoad {
             dataStorage.getObjects().put(objectModel.getName(),tmp);
         }
         for (Entity entity : gameCFG.getNpcs()){
-            Integer [] tmp = new Integer[3];
+            Integer [] tmp = new Integer[4];
             tmp[0] = entity.getX();
             tmp[1] = entity.getY();
             tmp[2] = entity.getId();
+            tmp[3] = entity.getLvl();
             dataStorage.getEntities().put(entity.getName(),tmp);
         }
         dataStorage.setMaxWorldCol(gameCFG.getMaxWorldCol());
@@ -138,7 +139,10 @@ public class SaveLoad {
                     entity.setX(entry.getValue()[i]);
                     entity.setY(entry.getValue()[i + 1]);
                     entity.setId(entry.getValue()[i + 2]);
-                    i += 2;
+                    for (int j = 0; j < entry.getValue()[i+3]-1 ; j++) {
+                        entity.lvlUp();
+                    }
+                    i += 3;
                     gameCFG.setNpcs(entity);
                 }
             }
