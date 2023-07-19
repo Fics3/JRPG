@@ -15,7 +15,7 @@ public class InOut {
     public BufferedImage setup(String imageName) {
         BufferedImage image;
         try {
-            image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(imageName + ".png")));
+            image = ImageIO.read((Objects.requireNonNull(getClass().getResourceAsStream(imageName + ".png"))));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class SaveLoadWorldTest {
     private GameCFG gameCFG = new GameCFG();
@@ -27,5 +28,19 @@ public class SaveLoadWorldTest {
 
         gameCFG.loadCustomGame();
         assertEquals(Arrays.deepToString(map),Arrays.deepToString(gameCFG.getDataMap()));
+    }
+    @Test
+    public void saveLoadWorldUncorrectTest(){
+        gameCFG.getLevelEditor().setCol(4);
+        gameCFG.getLevelEditor().setRow(4);
+        gameCFG.getLevelEditor().setLevel("testCustomWorld");
+        saveLoadWorld.save("src/test/java/testCustomWorld");
+
+        int[][] map = gameCFG.getLevelEditor().getDataMap();
+
+        saveLoadWorld.load("src/test/java/testCustomWorl");
+        gameCFG.loadCustomGame();
+
+        assertNotEquals(Arrays.deepToString(map),Arrays.deepToString(gameCFG.getDataMap()));
     }
 }

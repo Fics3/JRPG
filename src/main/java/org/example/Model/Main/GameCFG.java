@@ -95,6 +95,8 @@ public class GameCFG {
 //        objectModels.clear();
 //        npcs.clear();
 //        assetsSetter.setObject();
+        player.setX(player.getDefaultX());
+        player.setY(player.getDefaultY());
         collisionChecker.setMapColData(dataMap);
         pathFinder.setMapColData(dataMap);
         gameState = loadGame;

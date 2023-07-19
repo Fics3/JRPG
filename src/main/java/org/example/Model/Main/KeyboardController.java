@@ -288,7 +288,7 @@ public class KeyboardController implements KeyListener {
                 objects =! objects;
             }
             if(code == KeyEvent.VK_F5){
-                saveLoadWorld.save("customSave");
+                saveLoadWorld.save("src/main/resources/Saves/customSave");
             }
             if(code == KeyEvent.VK_ESCAPE){
                 gameCFG.setGameState(gameCFG.getTitleState());

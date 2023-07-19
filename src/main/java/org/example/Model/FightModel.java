@@ -25,7 +25,7 @@ public class FightModel{
         if(entity.getHP()<=0) {
             player.getGameCFG().deleteNpc(entity);
             player.lvlUp(10);
-            player.getGameCFG().setGameState(player.getGameCFG().getLoadEntity());
+            player.getGameCFG().setGameState(player.getGameCFG().getLoadGame());
         }
         else if (player.getHP()<=0){
             player.getGameCFG().setGameState(player.getGameCFG().getGameOverState());

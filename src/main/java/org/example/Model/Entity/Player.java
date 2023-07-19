@@ -44,8 +44,10 @@ public class Player extends Entity {
     }
 
     public void setDafautl() {
-        setX(getGameCFG().getMaxWorldWight() / 2);
-        setY(getGameCFG().getMaxWorldHeight() / 2);
+        setDefaultX(getGameCFG().getMaxWorldWight() / 2);
+        setDefaultY(getGameCFG().getMaxWorldHeight() / 2);
+        setX(getDefaultX());
+        setY(getDefaultY());
         setLvl(1);
         setSpeed(4);
         setMaxHP(10);
@@ -336,6 +338,16 @@ public class Player extends Entity {
 
     public void setManaPotions(int manaPotions) {
         this.manaPotions = manaPotions;
+    }
+
+    @Override
+    public void setDefaultY(int defaultY) {
+        super.setDefaultY(defaultY);
+    }
+
+    @Override
+    public void setDefaultX(int defaultX) {
+        super.setDefaultX(defaultX);
     }
 }
 

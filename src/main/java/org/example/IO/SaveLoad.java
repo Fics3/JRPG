@@ -129,7 +129,6 @@ public class SaveLoad {
                     objectModel.setId(entry.getValue()[i + 2]);
                     i += 2;
                     gameCFG.setObject(objectModel);
-//                System.out.println(object.getName() + "  X  " + object.getX() + "  Y " + object.getY());
                 }
             }
             gameCFG.getNpcs().clear();
@@ -141,7 +140,6 @@ public class SaveLoad {
                     entity.setId(entry.getValue()[i + 2]);
                     i += 2;
                     gameCFG.setNpcs(entity);
-//                System.out.println(object.getName() + "  X  " + object.getX() + "  Y " + object.getY());
                 }
             }
             gameCFG.setMapDataNum(dataStorage.getMap());

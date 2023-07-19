@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.awt.image.BufferedImage;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class IOTest {
     private InOut inOut = new InOut();
@@ -17,10 +18,11 @@ public class IOTest {
         gameCFG = new GameCFG();
     }
     @Test
-    public void testReadImage() {
+    public void readImageTest() {
         BufferedImage image = inOut.setup("/NPC/GreenBoy_FWalk1");
         assertNotNull(image);
     }
+
 //    @Test
 //    public void testLoadMap() {
 //        inOut.getDataMap(gameCFG);
